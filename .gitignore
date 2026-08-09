@@ -1,0 +1,8 @@
+# VS Code
+.vscode/
+
+# Maven
+backend/target/
+
+# SQL Server authentication DLL
+backend/auth/
