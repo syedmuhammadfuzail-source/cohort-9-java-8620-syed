@@ -13,9 +13,9 @@ class BackendApplicationTests {
 
     @Container
 @ServiceConnection
-static MSSQLServerContainer<?> sqlServer =
-        new MSSQLServerContainer<>(
-            "mcr.microsoft.com/mssql/server:2022-CU20-ubuntu-22.04"
+static MSSQLServerContainer sqlServer =
+        new MSSQLServerContainer(
+                "mcr.microsoft.com/mssql/server:2022-CU20-ubuntu-22.04"
         ).acceptLicense();
     @Test
     void contextLoads() {
