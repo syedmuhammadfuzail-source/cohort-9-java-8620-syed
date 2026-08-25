@@ -6,16 +6,20 @@ import com.contactmanagement.backend.entity.User;
 import com.contactmanagement.backend.service.ContactService;
 import com.contactmanagement.backend.service.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/contacts")
+@Validated
 public class ContactController {
 
     private final ContactService contactService;
@@ -33,8 +37,13 @@ public class ContactController {
     public ResponseEntity<Page<ContactResponse>> getContacts(
             Authentication authentication,
             @RequestParam(required = false) String search,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "0")
+            @Min(value = 0, message = "Page must be greater than or equal to 0")
+            int page,
+            @RequestParam(defaultValue = "10")
+            @Min(value = 1, message = "Size must be at least 1")
+            @Max(value = 100, message = "Size must not exceed 100")
+            int size
     ) {
 
         User user = getAuthenticatedUser(authentication);

@@ -19,6 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class ContactService {
@@ -37,6 +40,7 @@ public class ContactService {
         this.contactPhoneRepository = contactPhoneRepository;
     }
 
+    @Transactional(readOnly = true)
     public Page<ContactResponse> getContacts(
             User user,
             String search,
@@ -65,9 +69,72 @@ public class ContactService {
                             );
         }
 
-        return contacts.map(this::toResponse);
+        List<Contact> contactList = contacts.getContent();
+
+        if (contactList.isEmpty()) {
+            return contacts.map(contact ->
+                    createContactResponse(
+                            contact,
+                            List.of(),
+                            List.of()
+                    )
+            );
+        }
+
+        List<Long> contactIds = contactList.stream()
+                .map(Contact::getId)
+                .toList();
+
+        List<ContactEmail> emails =
+                contactEmailRepository.findByContactIdIn(contactIds);
+
+        List<ContactPhone> phones =
+                contactPhoneRepository.findByContactIdIn(contactIds);
+
+        Map<Long, List<ContactEmailResponse>> emailsByContact =
+                emails.stream()
+                        .collect(Collectors.groupingBy(
+                                email -> email.getContact().getId(),
+                                Collectors.mapping(
+                                        email -> new ContactEmailResponse(
+                                                email.getId(),
+                                                email.getEmail(),
+                                                email.getLabel()
+                                        ),
+                                        Collectors.toList()
+                                )
+                        ));
+
+        Map<Long, List<ContactPhoneResponse>> phonesByContact =
+                phones.stream()
+                        .collect(Collectors.groupingBy(
+                                phone -> phone.getContact().getId(),
+                                Collectors.mapping(
+                                        phone -> new ContactPhoneResponse(
+                                                phone.getId(),
+                                                phone.getPhone(),
+                                                phone.getLabel()
+                                        ),
+                                        Collectors.toList()
+                                )
+                        ));
+
+        return contacts.map(contact ->
+                createContactResponse(
+                        contact,
+                        emailsByContact.getOrDefault(
+                                contact.getId(),
+                                List.of()
+                        ),
+                        phonesByContact.getOrDefault(
+                                contact.getId(),
+                                List.of()
+                        )
+                )
+        );
     }
 
+    @Transactional(readOnly = true)
     public ContactResponse getContact(
             Long id,
             User user
@@ -237,6 +304,19 @@ public class ContactService {
                         )
                         .toList();
 
+        return createContactResponse(
+                contact,
+                emails,
+                phones
+        );
+    }
+
+    private ContactResponse createContactResponse(
+            Contact contact,
+            List<ContactEmailResponse> emails,
+            List<ContactPhoneResponse> phones
+    ) {
+
         return new ContactResponse(
                 contact.getId(),
                 contact.getFirstName(),
@@ -249,8 +329,6 @@ public class ContactService {
         );
     }
 }
-
-
 
 
 

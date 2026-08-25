@@ -2,6 +2,7 @@ package com.contactmanagement.backend.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
@@ -20,10 +21,10 @@ public class ContactRequest {
     private String title;
 
     @Valid
-    private List<ContactEmailRequest> emails = new ArrayList<>();
+    private List<@NotNull(message = "Email entry must not be null") ContactEmailRequest> emails = new ArrayList<>();
 
     @Valid
-    private List<ContactPhoneRequest> phones = new ArrayList<>();
+    private List<@NotNull(message = "Phone entry must not be null") ContactPhoneRequest> phones = new ArrayList<>();
 
     public ContactRequest() {
     }

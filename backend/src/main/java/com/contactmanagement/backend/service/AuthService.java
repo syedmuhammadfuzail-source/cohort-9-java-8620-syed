@@ -6,6 +6,7 @@ import com.contactmanagement.backend.dto.RegisterRequest;
 import com.contactmanagement.backend.dto.UserResponse;
 import com.contactmanagement.backend.entity.User;
 import com.contactmanagement.backend.security.JwtService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -62,7 +63,15 @@ public class AuthService {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
 
-        User savedUser = userService.save(user);
+        User savedUser;
+
+        try {
+            savedUser = userService.save(user);
+        } catch (DataIntegrityViolationException exception) {
+            throw new IllegalArgumentException(
+                    "Email or phone number is already registered"
+            );
+        }
 
         return new UserResponse(
                 savedUser.getId(),
@@ -83,14 +92,14 @@ public class AuthService {
         if (identifier.contains("@")) {
             user = userService.findByEmail(identifier)
                     .orElseThrow(() -> new IllegalArgumentException(
-                            "Invalid email or password"
+                            "Invalid identifier or password"
                     ));
         }
         // Login using phone
         else {
             user = userService.findByPhone(identifier)
                     .orElseThrow(() -> new IllegalArgumentException(
-                            "Invalid phone or password"
+                            "Invalid identifier or password"
                     ));
         }
 
@@ -100,7 +109,7 @@ public class AuthService {
                 user.getPassword()
         )) {
             throw new IllegalArgumentException(
-                    "Invalid email or password"
+                    "Invalid identifier or password"
             );
         }
 

@@ -1,5 +1,6 @@
 package com.contactmanagement.backend.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -43,6 +44,19 @@ public class GlobalExceptionHandler {
                         "error", message != null
                                 ? message
                                 : "Invalid request"
+                ));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, String>> handleDataIntegrityViolation(
+            DataIntegrityViolationException exception
+    ) {
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                        "error",
+                        "Email or phone number is already registered"
                 ));
     }
 }
