@@ -13,7 +13,11 @@ public class ContactPhoneRequest {
     @Size(max = 50, message = "Phone label must not exceed 50 characters")
     private String label;
 
+    /**
+     * Default constructor required by Jackson for JSON deserialization.
+     */
     public ContactPhoneRequest() {
+        // Required by Jackson
     }
 
     public String getPhone() {

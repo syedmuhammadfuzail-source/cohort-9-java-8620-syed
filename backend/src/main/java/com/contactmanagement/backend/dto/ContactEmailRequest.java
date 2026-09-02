@@ -15,7 +15,11 @@ public class ContactEmailRequest {
     @Size(max = 50, message = "Email label must not exceed 50 characters")
     private String label;
 
+    /**
+     * Default constructor required by Jackson for JSON deserialization.
+     */
     public ContactEmailRequest() {
+        // Required by Jackson
     }
 
     public String getEmail() {

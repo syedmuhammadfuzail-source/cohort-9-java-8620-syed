@@ -13,6 +13,8 @@ import com.contactmanagement.backend.entity.User;
 import com.contactmanagement.backend.repository.ContactEmailRepository;
 import com.contactmanagement.backend.repository.ContactPhoneRepository;
 import com.contactmanagement.backend.repository.ContactRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,11 +22,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
 public class ContactService {
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(ContactService.class);
+
+    private static final String CONTACT_NOT_FOUND = "Contact not found";
 
     private final ContactRepository contactRepository;
     private final ContactEmailRepository contactEmailRepository;
@@ -46,6 +52,14 @@ public class ContactService {
             String search,
             Pageable pageable
     ) {
+
+        logger.info(
+                "Fetching contacts for user id={}, page={}, size={}, searchProvided={}",
+                user.getId(),
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                search != null && !search.isBlank()
+        );
 
         Page<Contact> contacts;
 
@@ -72,6 +86,12 @@ public class ContactService {
         List<Contact> contactList = contacts.getContent();
 
         if (contactList.isEmpty()) {
+
+            logger.info(
+                    "No contacts found for user id={}",
+                    user.getId()
+            );
+
             return contacts.map(contact ->
                     createContactResponse(
                             contact,
@@ -119,6 +139,12 @@ public class ContactService {
                                 )
                         ));
 
+        logger.info(
+                "Successfully fetched {} contacts for user id={}",
+                contactList.size(),
+                user.getId()
+        );
+
         return contacts.map(contact ->
                 createContactResponse(
                         contact,
@@ -140,13 +166,32 @@ public class ContactService {
             User user
     ) {
 
+        logger.info(
+                "Fetching contact id={} for user id={}",
+                id,
+                user.getId()
+        );
+
         Contact contact = contactRepository
                 .findByIdAndUser(id, user)
-                .orElseThrow(() ->
-                        new IllegalArgumentException(
-                                "Contact not found"
-                        )
-                );
+                .orElseThrow(() -> {
+
+                    logger.warn(
+                            "Contact not found: id={}, user id={}",
+                            id,
+                            user.getId()
+                    );
+
+                    return new IllegalArgumentException(
+                            CONTACT_NOT_FOUND
+                    );
+                });
+
+        logger.info(
+                "Successfully fetched contact id={} for user id={}",
+                id,
+                user.getId()
+        );
 
         return toResponse(contact);
     }
@@ -156,6 +201,11 @@ public class ContactService {
             ContactRequest request,
             User user
     ) {
+
+        logger.info(
+                "Creating new contact for user id={}",
+                user.getId()
+        );
 
         Contact contact = new Contact();
 
@@ -194,6 +244,12 @@ public class ContactService {
             }
         }
 
+        logger.info(
+                "Contact created successfully: contact id={}, user id={}",
+                savedContact.getId(),
+                user.getId()
+        );
+
         return toResponse(savedContact);
     }
 
@@ -204,13 +260,26 @@ public class ContactService {
             User user
     ) {
 
+        logger.info(
+                "Updating contact id={} for user id={}",
+                id,
+                user.getId()
+        );
+
         Contact contact = contactRepository
                 .findByIdAndUser(id, user)
-                .orElseThrow(() ->
-                        new IllegalArgumentException(
-                                "Contact not found"
-                        )
-                );
+                .orElseThrow(() -> {
+
+                    logger.warn(
+                            "Contact update failed: contact id={} not found for user id={}",
+                            id,
+                            user.getId()
+                    );
+
+                    return new IllegalArgumentException(
+                            CONTACT_NOT_FOUND
+                    );
+                });
 
         contact.setFirstName(request.getFirstName());
         contact.setLastName(request.getLastName());
@@ -250,6 +319,12 @@ public class ContactService {
             }
         }
 
+        logger.info(
+                "Contact updated successfully: contact id={}, user id={}",
+                id,
+                user.getId()
+        );
+
         return toResponse(contact);
     }
 
@@ -259,19 +334,38 @@ public class ContactService {
             User user
     ) {
 
+        logger.info(
+                "Deleting contact id={} for user id={}",
+                id,
+                user.getId()
+        );
+
         Contact contact = contactRepository
                 .findByIdAndUser(id, user)
-                .orElseThrow(() ->
-                        new IllegalArgumentException(
-                                "Contact not found"
-                        )
-                );
+                .orElseThrow(() -> {
+
+                    logger.warn(
+                            "Contact deletion failed: contact id={} not found for user id={}",
+                            id,
+                            user.getId()
+                    );
+
+                    return new IllegalArgumentException(
+                            CONTACT_NOT_FOUND
+                    );
+                });
 
         contactEmailRepository.deleteByContact(contact);
 
         contactPhoneRepository.deleteByContact(contact);
 
         contactRepository.delete(contact);
+
+        logger.info(
+                "Contact deleted successfully: contact id={}, user id={}",
+                id,
+                user.getId()
+        );
     }
 
     private ContactResponse toResponse(
@@ -317,18 +411,18 @@ public class ContactService {
             List<ContactPhoneResponse> phones
     ) {
 
-        return new ContactResponse(
-                contact.getId(),
-                contact.getFirstName(),
-                contact.getLastName(),
-                contact.getTitle(),
-                emails,
-                phones,
-                contact.getCreatedAt(),
-                contact.getUpdatedAt()
-        );
+       ContactResponse response = new ContactResponse(
+        contact.getId(),
+        contact.getFirstName(),
+        contact.getLastName(),
+        contact.getTitle(),
+        emails,
+        phones
+);
+
+response.setCreatedAt(contact.getCreatedAt());
+response.setUpdatedAt(contact.getUpdatedAt());
+
+return response;
     }
 }
-
-
-

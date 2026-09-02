@@ -3,10 +3,13 @@ package com.contactmanagement.backend.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Entity
 @Table(name = "users")
 public class User {
+
+    private static final ZoneId APPLICATION_ZONE = ZoneId.of("Asia/Karachi");
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,18 +37,22 @@ public class User {
     private LocalDateTime updatedAt;
 
     @PrePersist
-protected void onCreate() {
-    LocalDateTime now = LocalDateTime.now();
-    createdAt = now;
-    updatedAt = now;
-}
+    protected void onCreate() {
+        LocalDateTime now = LocalDateTime.now(APPLICATION_ZONE);
+        createdAt = now;
+        updatedAt = now;
+    }
 
-@PreUpdate
-protected void onUpdate() {
-    updatedAt = LocalDateTime.now();
-}
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now(APPLICATION_ZONE);
+    }
 
+    /**
+     * Default constructor required by JPA.
+     */
     public User() {
+        // Required by JPA
     }
 
     public Long getId() {

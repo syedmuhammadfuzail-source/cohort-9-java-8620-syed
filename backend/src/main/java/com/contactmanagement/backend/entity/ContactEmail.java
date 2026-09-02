@@ -20,7 +20,11 @@ public class ContactEmail {
     @Column(nullable = false, length = 50)
     private String label;
 
+    /**
+     * Default constructor required by JPA.
+     */
     public ContactEmail() {
+        // Required by JPA
     }
 
     public Long getId() {

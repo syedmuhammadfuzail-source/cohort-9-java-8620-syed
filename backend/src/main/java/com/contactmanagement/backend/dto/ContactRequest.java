@@ -26,7 +26,11 @@ public class ContactRequest {
     @Valid
     private List<@NotNull(message = "Phone entry must not be null") ContactPhoneRequest> phones = new ArrayList<>();
 
+    /**
+     * Default constructor required by Jackson for JSON deserialization.
+     */
     public ContactRequest() {
+        // Required by Jackson
     }
 
     public String getFirstName() {

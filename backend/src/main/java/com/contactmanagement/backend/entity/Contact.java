@@ -3,6 +3,7 @@ package com.contactmanagement.backend.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Entity
 @Table(name = "contacts")
@@ -33,17 +34,21 @@ public class Contact {
 
     @PrePersist
     protected void onCreate() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(ZoneId.systemDefault());
         createdAt = now;
         updatedAt = now;
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now(ZoneId.systemDefault());
     }
 
+    /**
+     * Default constructor required by JPA.
+     */
     public Contact() {
+        // Required by JPA
     }
 
     public Long getId() {

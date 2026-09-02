@@ -25,9 +25,7 @@ public class ContactResponse {
             String lastName,
             String title,
             List<ContactEmailResponse> emails,
-            List<ContactPhoneResponse> phones,
-            LocalDateTime createdAt,
-            LocalDateTime updatedAt
+            List<ContactPhoneResponse> phones
     ) {
         this.id = id;
         this.firstName = firstName;
@@ -35,8 +33,6 @@ public class ContactResponse {
         this.title = title;
         this.emails = emails;
         this.phones = phones;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     public Long getId() {

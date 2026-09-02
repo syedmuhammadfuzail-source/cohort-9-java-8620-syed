@@ -8,6 +8,8 @@ import com.contactmanagement.backend.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +23,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/contacts")
 @Validated
 public class ContactController {
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(ContactController.class);
 
     private final ContactService contactService;
     private final UserService userService;
@@ -38,15 +43,31 @@ public class ContactController {
             Authentication authentication,
             @RequestParam(required = false) String search,
             @RequestParam(defaultValue = "0")
-            @Min(value = 0, message = "Page must be greater than or equal to 0")
+            @Min(
+                    value = 0,
+                    message = "Page must be greater than or equal to 0"
+            )
             int page,
             @RequestParam(defaultValue = "10")
-            @Min(value = 1, message = "Size must be at least 1")
-            @Max(value = 100, message = "Size must not exceed 100")
+            @Min(
+                    value = 1,
+                    message = "Size must be at least 1"
+            )
+            @Max(
+                    value = 100,
+                    message = "Size must not exceed 100"
+            )
             int size
     ) {
 
         User user = getAuthenticatedUser(authentication);
+
+        logger.info(
+                "Fetching contacts for authenticated user, page={}, size={}, searchProvided={}",
+                page,
+                size,
+                search != null && !search.isBlank()
+        );
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -56,6 +77,12 @@ public class ContactController {
                         search,
                         pageable
                 );
+
+        logger.info(
+                "Contacts fetched successfully, page={}, totalElements={}",
+                page,
+                contacts.getTotalElements()
+        );
 
         return ResponseEntity.ok(contacts);
     }
@@ -68,8 +95,21 @@ public class ContactController {
 
         User user = getAuthenticatedUser(authentication);
 
+        logger.info(
+                "Fetching contact with id={}",
+                id
+        );
+
         ContactResponse contact =
-                contactService.getContact(id, user);
+                contactService.getContact(
+                        id,
+                        user
+                );
+
+        logger.info(
+                "Contact fetched successfully, id={}",
+                id
+        );
 
         return ResponseEntity.ok(contact);
     }
@@ -82,11 +122,20 @@ public class ContactController {
 
         User user = getAuthenticatedUser(authentication);
 
+        logger.info(
+                "Creating new contact for authenticated user"
+        );
+
         ContactResponse contact =
                 contactService.createContact(
                         request,
                         user
                 );
+
+        logger.info(
+                "Contact created successfully, id={}",
+                contact.getId()
+        );
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -102,12 +151,22 @@ public class ContactController {
 
         User user = getAuthenticatedUser(authentication);
 
+        logger.info(
+                "Updating contact with id={}",
+                id
+        );
+
         ContactResponse contact =
                 contactService.updateContact(
                         id,
                         request,
                         user
                 );
+
+        logger.info(
+                "Contact updated successfully, id={}",
+                id
+        );
 
         return ResponseEntity.ok(contact);
     }
@@ -120,9 +179,19 @@ public class ContactController {
 
         User user = getAuthenticatedUser(authentication);
 
+        logger.info(
+                "Deleting contact with id={}",
+                id
+        );
+
         contactService.deleteContact(
                 id,
                 user
+        );
+
+        logger.info(
+                "Contact deleted successfully, id={}",
+                id
         );
 
         return ResponseEntity.noContent().build();
@@ -136,13 +205,17 @@ public class ContactController {
 
         return userService
                 .findByIdentifier(identifier)
-                .orElseThrow(() ->
-                        new IllegalArgumentException(
-                                "Authenticated user not found"
-                        )
-                );
+                .orElseThrow(() -> {
+
+                    logger.error(
+                            "Authenticated user not found"
+                    );
+
+                    return new IllegalArgumentException(
+                            "Authenticated user not found"
+                    );
+                });
     }
 }
-
 
 

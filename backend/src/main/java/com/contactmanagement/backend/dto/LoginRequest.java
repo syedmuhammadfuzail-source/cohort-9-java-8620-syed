@@ -12,7 +12,11 @@ public class LoginRequest {
     @Size(max = 255, message = "Password must not exceed 255 characters")
     private String password;
 
+    /**
+     * Default constructor required by Jackson for JSON deserialization.
+     */
     public LoginRequest() {
+        // Required by Jackson
     }
 
     public String getIdentifier() {
