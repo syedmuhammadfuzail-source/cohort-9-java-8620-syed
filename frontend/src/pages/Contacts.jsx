@@ -496,16 +496,7 @@ function Contacts() {
                                 </button>
 
                                 <span>
-                                    Page{" "}
-                                    <strong>
-                                        {
-                                            currentPageDisplay
-                                        }
-                                    </strong>{" "}
-                                    of{" "}
-                                    <strong>
-                                        {totalPages}
-                                    </strong>
+                                    {`Page ${currentPageDisplay} of ${totalPages}`}
                                 </span>
 
                                 <button
@@ -530,18 +521,8 @@ function Contacts() {
             {/* Delete Confirmation Modal */}
             {deleteModalOpen &&
                 contactToDelete && (
-                    <div
-                        className="delete-modal-overlay"
-                        onClick={
-                            handleCloseDeleteModal
-                        }
-                    >
-                        <div
-                            className="delete-modal"
-                            onClick={(event) =>
-                                event.stopPropagation()
-                            }
-                        >
+                    <div className="delete-modal-overlay">
+                        <div className="delete-modal">
                             <div className="delete-modal-icon">
                                 !
                             </div>
@@ -603,4 +584,3 @@ function Contacts() {
 }
 
 export default Contacts;
-

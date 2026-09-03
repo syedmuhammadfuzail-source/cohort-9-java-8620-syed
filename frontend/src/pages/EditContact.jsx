@@ -518,11 +518,14 @@ function EditContact() {
                                             }
                                         >
                                             <div className="edit-input-wrapper">
-                                                <label>
+                                                <label
+                                                    htmlFor={`email-${index}`}
+                                                >
                                                     Email Address
                                                 </label>
 
                                                 <input
+                                                    id={`email-${index}`}
                                                     type="email"
                                                     placeholder="name@example.com"
                                                     value={
@@ -546,11 +549,14 @@ function EditContact() {
                                             </div>
 
                                             <div className="edit-label-wrapper">
-                                                <label>
+                                                <label
+                                                    htmlFor={`email-label-${index}`}
+                                                >
                                                     Label
                                                 </label>
 
                                                 <select
+                                                    id={`email-label-${index}`}
                                                     value={
                                                         item.label
                                                     }
@@ -652,11 +658,14 @@ function EditContact() {
                                             }
                                         >
                                             <div className="edit-input-wrapper">
-                                                <label>
+                                                <label
+                                                    htmlFor={`phone-${index}`}
+                                                >
                                                     Phone Number
                                                 </label>
 
                                                 <input
+                                                    id={`phone-${index}`}
                                                     type="text"
                                                     placeholder="03XXXXXXXXX"
                                                     value={
@@ -680,11 +689,14 @@ function EditContact() {
                                             </div>
 
                                             <div className="edit-label-wrapper">
-                                                <label>
+                                                <label
+                                                    htmlFor={`phone-label-${index}`}
+                                                >
                                                     Label
                                                 </label>
 
                                                 <select
+                                                    id={`phone-label-${index}`}
                                                     value={
                                                         item.label
                                                     }

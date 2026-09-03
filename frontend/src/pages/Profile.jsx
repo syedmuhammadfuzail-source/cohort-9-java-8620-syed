@@ -255,18 +255,8 @@ function Profile() {
             </main>
 
             {changePasswordOpen && (
-                <div
-                    className="password-modal-overlay"
-                    onClick={
-                        handleClosePasswordModal
-                    }
-                >
-                    <div
-                        className="password-modal"
-                        onClick={(event) =>
-                            event.stopPropagation()
-                        }
-                    >
+                <div className="password-modal-overlay">
+                    <div className="password-modal">
                         <div className="password-modal-header">
                             <h2>
                                 Change Password
