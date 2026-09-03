@@ -1,125 +1,193 @@
 
-import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
-import axios from "axios";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import AddContact from "./AddContact";
+import api from "../services/api";
 
-vi.mock("axios", () => ({
+const { mockNavigate, mockShowToast } = vi.hoisted(() => ({
+    mockNavigate: vi.fn(),
+    mockShowToast: vi.fn(),
+}));
+
+vi.mock("react-router-dom", () => ({
+    useNavigate: () => mockNavigate,
+}));
+
+vi.mock("../context/ToastContext", () => ({
+    useToast: () => ({
+        showToast: mockShowToast,
+    }),
+}));
+
+vi.mock("../services/api", () => ({
     default: {
         post: vi.fn(),
     },
 }));
 
-const mockNavigate = vi.fn();
-
-vi.mock("react-router-dom", async () => {
-    const actual = await vi.importActual("react-router-dom");
-
-    return {
-        ...actual,
-        useNavigate: () => mockNavigate,
-    };
-});
-
-const renderAddContact = () =>
-    render(
-        <MemoryRouter>
-            <AddContact />
-        </MemoryRouter>
-    );
-
 describe("AddContact", () => {
     beforeEach(() => {
         vi.clearAllMocks();
-
-        axios.post.mockResolvedValue({
-            data: { id: 1 },
-        });
+        api.post.mockReset();
     });
 
-    it("renders the add contact form", () => {
-        renderAddContact();
+    const fillValidContact = () => {
+        fireEvent.change(
+            screen.getByLabelText("First Name *"),
+            {
+                target: {
+                    value: "John",
+                },
+            }
+        );
+
+        fireEvent.change(
+            screen.getByLabelText("Email Address"),
+            {
+                target: {
+                    value: "john@example.com",
+                },
+            }
+        );
+
+        fireEvent.change(
+            screen.getByLabelText("Phone Number"),
+            {
+                target: {
+                    value: "03001234567",
+                },
+            }
+        );
+    };
+
+    it("renders the Add Contact page", () => {
+        render(<AddContact />);
 
         expect(
-            screen.getByRole("heading", {
-                name: "Add Contact",
-            })
+            screen.getByText("Contact Management")
         ).toBeInTheDocument();
 
         expect(
-            screen.getByPlaceholderText("First Name")
+            screen.getByText("Add Contact")
         ).toBeInTheDocument();
 
         expect(
-            screen.getByPlaceholderText("Last Name")
+            screen.getByText("Add New Contact")
         ).toBeInTheDocument();
 
         expect(
-            screen.getByPlaceholderText("Title")
+            screen.getByText("Basic Information")
         ).toBeInTheDocument();
 
         expect(
-            screen.getByPlaceholderText("name@example.com")
+            screen.getByText("Email Addresses")
         ).toBeInTheDocument();
 
         expect(
-            screen.getByPlaceholderText("Phone Number")
+            screen.getByText("Phone Numbers")
         ).toBeInTheDocument();
 
         expect(
             screen.getByRole("button", {
-                name: "Save Contact",
+                name: "Create Contact",
             })
         ).toBeInTheDocument();
     });
 
-    it("updates the basic contact fields", () => {
-        renderAddContact();
+    it("renders all basic information fields", () => {
+        render(<AddContact />);
+
+        expect(
+            screen.getByLabelText("First Name *")
+        ).toBeInTheDocument();
+
+        expect(
+            screen.getByLabelText("Last Name")
+        ).toBeInTheDocument();
+
+        expect(
+            screen.getByLabelText("Job Title")
+        ).toBeInTheDocument();
+    });
+
+    it("renders one email field by default", () => {
+        render(<AddContact />);
+
+        expect(
+            screen.getByLabelText("Email Address")
+        ).toBeInTheDocument();
+
+        const selects = screen.getAllByRole("combobox");
+
+        expect(selects).toHaveLength(2);
+        expect(selects[0]).toHaveValue("work");
+    });
+
+    it("renders one phone field by default", () => {
+        render(<AddContact />);
+
+        expect(
+            screen.getByLabelText("Phone Number")
+        ).toBeInTheDocument();
+
+        const selects = screen.getAllByRole("combobox");
+
+        expect(selects).toHaveLength(2);
+        expect(selects[1]).toHaveValue("mobile");
+    });
+
+    it("updates the first name", () => {
+        render(<AddContact />);
 
         const firstName =
-            screen.getByPlaceholderText("First Name");
-        const lastName =
-            screen.getByPlaceholderText("Last Name");
-        const title =
-            screen.getByPlaceholderText("Title");
+            screen.getByLabelText("First Name *");
 
         fireEvent.change(firstName, {
             target: {
-                name: "firstName",
                 value: "John",
             },
         });
 
+        expect(firstName).toHaveValue("John");
+    });
+
+    it("updates the last name", () => {
+        render(<AddContact />);
+
+        const lastName =
+            screen.getByLabelText("Last Name");
+
         fireEvent.change(lastName, {
             target: {
-                name: "lastName",
                 value: "Doe",
             },
         });
 
+        expect(lastName).toHaveValue("Doe");
+    });
+
+    it("updates the job title", () => {
+        render(<AddContact />);
+
+        const title =
+            screen.getByLabelText("Job Title");
+
         fireEvent.change(title, {
             target: {
-                name: "title",
-                value: "Manager",
+                value: "Software Engineer",
             },
         });
 
-        expect(firstName).toHaveValue("John");
-        expect(lastName).toHaveValue("Doe");
-        expect(title).toHaveValue("Manager");
+        expect(title).toHaveValue(
+            "Software Engineer"
+        );
     });
 
     it("updates the email value and label", () => {
-        renderAddContact();
+        render(<AddContact />);
 
         const email =
-            screen.getByPlaceholderText("name@example.com");
-
-        const emailLabel =
-            screen.getByLabelText("Label", {
-                selector: "#email-label-0",
-            });
+            screen.getByLabelText("Email Address");
 
         fireEvent.change(email, {
             target: {
@@ -127,26 +195,27 @@ describe("AddContact", () => {
             },
         });
 
-        fireEvent.change(emailLabel, {
+        expect(email).toHaveValue(
+            "john@example.com"
+        );
+
+        const selects =
+            screen.getAllByRole("combobox");
+
+        fireEvent.change(selects[0], {
             target: {
-                value: "Work",
+                value: "personal",
             },
         });
 
-        expect(email).toHaveValue("john@example.com");
-        expect(emailLabel).toHaveValue("Work");
+        expect(selects[0]).toHaveValue("personal");
     });
 
     it("updates the phone value and label", () => {
-        renderAddContact();
+        render(<AddContact />);
 
         const phone =
-            screen.getByPlaceholderText("Phone Number");
-
-        const phoneLabel =
-            screen.getByLabelText("Label", {
-                selector: "#phone-label-0",
-            });
+            screen.getByLabelText("Phone Number");
 
         fireEvent.change(phone, {
             target: {
@@ -154,35 +223,33 @@ describe("AddContact", () => {
             },
         });
 
-        fireEvent.change(phoneLabel, {
+        expect(phone).toHaveValue(
+            "03001234567"
+        );
+
+        const selects =
+            screen.getAllByRole("combobox");
+
+        fireEvent.change(selects[1], {
             target: {
-                value: "Home",
+                value: "home",
             },
         });
 
-        expect(phone).toHaveValue("03001234567");
-        expect(phoneLabel).toHaveValue("Home");
+        expect(selects[1]).toHaveValue("home");
     });
 
     it("adds another email field", () => {
-        renderAddContact();
-
-        expect(
-            screen.getAllByPlaceholderText(
-                "name@example.com"
-            )
-        ).toHaveLength(1);
+        render(<AddContact />);
 
         fireEvent.click(
             screen.getByRole("button", {
-                name: "Add Email",
+                name: "+ Add Email",
             })
         );
 
         expect(
-            screen.getAllByPlaceholderText(
-                "name@example.com"
-            )
+            screen.getAllByLabelText("Email Address")
         ).toHaveLength(2);
 
         expect(
@@ -192,143 +259,75 @@ describe("AddContact", () => {
         ).toHaveLength(2);
     });
 
-    it("removes an additional email field", () => {
-        renderAddContact();
+    it("adds another phone field", () => {
+        render(<AddContact />);
 
         fireEvent.click(
             screen.getByRole("button", {
-                name: "Add Email",
+                name: "+ Add Phone",
             })
         );
 
         expect(
-            screen.getAllByPlaceholderText(
-                "name@example.com"
-            )
+            screen.getAllByLabelText("Phone Number")
         ).toHaveLength(2);
 
-        const emailRemoveButton =
+        expect(
             screen.getAllByRole("button", {
                 name: "Remove",
-            })[0];
-
-        fireEvent.click(emailRemoveButton);
-
-        expect(
-            screen.getAllByPlaceholderText(
-                "name@example.com"
-            )
-        ).toHaveLength(1);
+            })
+        ).toHaveLength(2);
     });
 
     it("updates a newly added email", () => {
-        renderAddContact();
+        render(<AddContact />);
 
         fireEvent.click(
             screen.getByRole("button", {
-                name: "Add Email",
+                name: "+ Add Email",
             })
         );
 
         const emails =
-            screen.getAllByPlaceholderText(
-                "name@example.com"
+            screen.getAllByLabelText(
+                "Email Address"
             );
 
         fireEvent.change(emails[1], {
             target: {
-                value: "work@example.com",
-            },
-        });
-
-        const secondEmailLabel =
-            screen.getByLabelText("Label", {
-                selector: "#email-label-1",
-            });
-
-        fireEvent.change(secondEmailLabel, {
-            target: {
-                value: "Other",
+                value: "second@example.com",
             },
         });
 
         expect(emails[1]).toHaveValue(
-            "work@example.com"
+            "second@example.com"
         );
 
-        expect(secondEmailLabel).toHaveValue(
-            "Other"
+        const selects =
+            screen.getAllByRole("combobox");
+
+        fireEvent.change(selects[1], {
+            target: {
+                value: "personal",
+            },
+        });
+
+        expect(selects[1]).toHaveValue(
+            "personal"
         );
-    });
-
-    it("adds another phone field", () => {
-        renderAddContact();
-
-        expect(
-            screen.getAllByPlaceholderText(
-                "Phone Number"
-            )
-        ).toHaveLength(1);
-
-        fireEvent.click(
-            screen.getByRole("button", {
-                name: "Add Phone",
-            })
-        );
-
-        expect(
-            screen.getAllByPlaceholderText(
-                "Phone Number"
-            )
-        ).toHaveLength(2);
-
-        expect(
-            screen.getAllByRole("button", {
-                name: "Remove",
-            })
-        ).toHaveLength(2);
-    });
-
-    it("removes an additional phone field", () => {
-        renderAddContact();
-
-        fireEvent.click(
-            screen.getByRole("button", {
-                name: "Add Phone",
-            })
-        );
-
-        expect(
-            screen.getAllByPlaceholderText(
-                "Phone Number"
-            )
-        ).toHaveLength(2);
-
-        const phoneRemoveButton =
-            screen.getAllByRole("button", {
-                name: "Remove",
-            })[1];
-
-        fireEvent.click(phoneRemoveButton);
-
-        expect(
-            screen.getAllByPlaceholderText(
-                "Phone Number"
-            )
-        ).toHaveLength(1);
     });
 
     it("updates a newly added phone", () => {
-        renderAddContact();
+        render(<AddContact />);
 
         fireEvent.click(
             screen.getByRole("button", {
-                name: "Add Phone",
+                name: "+ Add Phone",
             })
         );
 
         const phones =
-            screen.getAllByPlaceholderText(
+            screen.getAllByLabelText(
                 "Phone Number"
             );
 
@@ -338,28 +337,98 @@ describe("AddContact", () => {
             },
         });
 
-        const secondPhoneLabel =
-            screen.getByLabelText("Label", {
-                selector: "#phone-label-1",
-            });
-
-        fireEvent.change(secondPhoneLabel, {
-            target: {
-                value: "Work",
-            },
-        });
-
         expect(phones[1]).toHaveValue(
             "03111234567"
         );
 
-        expect(secondPhoneLabel).toHaveValue(
-            "Work"
+        const selects =
+            screen.getAllByRole("combobox");
+
+        expect(selects).toHaveLength(3);
+
+        fireEvent.change(selects[2], {
+            target: {
+                value: "home",
+            },
+        });
+
+        expect(selects[2]).toHaveValue("home");
+    });
+
+    it("removes an email field", () => {
+        render(<AddContact />);
+
+        fireEvent.click(
+            screen.getByRole("button", {
+                name: "+ Add Email",
+            })
+        );
+
+        expect(
+            screen.getAllByLabelText(
+                "Email Address"
+            )
+        ).toHaveLength(2);
+
+        const removeButtons =
+            screen.getAllByRole("button", {
+                name: "Remove",
+            });
+
+        fireEvent.click(removeButtons[1]);
+
+        expect(
+            screen.getAllByLabelText(
+                "Email Address"
+            )
+        ).toHaveLength(1);
+    });
+
+    it("removes a phone field", () => {
+        render(<AddContact />);
+
+        fireEvent.click(
+            screen.getByRole("button", {
+                name: "+ Add Phone",
+            })
+        );
+
+        expect(
+            screen.getAllByLabelText(
+                "Phone Number"
+            )
+        ).toHaveLength(2);
+
+        const removeButtons =
+            screen.getAllByRole("button", {
+                name: "Remove",
+            });
+
+        fireEvent.click(removeButtons[1]);
+
+        expect(
+            screen.getAllByLabelText(
+                "Phone Number"
+            )
+        ).toHaveLength(1);
+    });
+
+    it("navigates back when Back to Contacts is clicked", () => {
+        render(<AddContact />);
+
+        fireEvent.click(
+            screen.getByRole("button", {
+                name: "Back to Contacts",
+            })
+        );
+
+        expect(mockNavigate).toHaveBeenCalledWith(
+            "/contacts"
         );
     });
 
-    it("navigates to contacts when Cancel is clicked", () => {
-        renderAddContact();
+    it("navigates back when Cancel is clicked", () => {
+        render(<AddContact />);
 
         fireEvent.click(
             screen.getByRole("button", {
@@ -372,42 +441,70 @@ describe("AddContact", () => {
         );
     });
 
-    it("submits the contact successfully", async () => {
-        renderAddContact();
+    it("shows first name validation error", async () => {
+        render(<AddContact />);
+
+        fireEvent.click(
+            screen.getByRole("button", {
+                name: "Create Contact",
+            })
+        );
+
+        expect(
+            await screen.findByText(
+                "First name is required."
+            )
+        ).toBeInTheDocument();
+
+        expect(api.post).not.toHaveBeenCalled();
+    });
+
+    it("shows email validation error", async () => {
+        render(<AddContact />);
 
         fireEvent.change(
-            screen.getByPlaceholderText("First Name"),
+            screen.getByLabelText(
+                "First Name *"
+            ),
             {
                 target: {
-                    name: "firstName",
+                    value: "John",
+                },
+            }
+        );
+
+        fireEvent.click(
+            screen.getByRole("button", {
+                name: "Create Contact",
+            })
+        );
+
+        expect(
+            await screen.findByText(
+                "At least one email is required."
+            )
+        ).toBeInTheDocument();
+
+        expect(api.post).not.toHaveBeenCalled();
+    });
+
+    it("shows phone validation error", async () => {
+        render(<AddContact />);
+
+        fireEvent.change(
+            screen.getByLabelText(
+                "First Name *"
+            ),
+            {
+                target: {
                     value: "John",
                 },
             }
         );
 
         fireEvent.change(
-            screen.getByPlaceholderText("Last Name"),
-            {
-                target: {
-                    name: "lastName",
-                    value: "Doe",
-                },
-            }
-        );
-
-        fireEvent.change(
-            screen.getByPlaceholderText("Title"),
-            {
-                target: {
-                    name: "title",
-                    value: "Manager",
-                },
-            }
-        );
-
-        fireEvent.change(
-            screen.getByPlaceholderText(
-                "name@example.com"
+            screen.getByLabelText(
+                "Email Address"
             ),
             {
                 target: {
@@ -416,75 +513,371 @@ describe("AddContact", () => {
             }
         );
 
+        fireEvent.click(
+            screen.getByRole("button", {
+                name: "Create Contact",
+            })
+        );
+
+        expect(
+            await screen.findByText(
+                "At least one phone number is required."
+            )
+        ).toBeInTheDocument();
+
+        expect(api.post).not.toHaveBeenCalled();
+    });
+
+    it("creates a contact successfully", async () => {
+        api.post.mockResolvedValue({
+            data: {
+                id: 1,
+            },
+        });
+
+        render(<AddContact />);
+
+        fillValidContact();
+
+        fireEvent.click(
+            screen.getByRole("button", {
+                name: "Create Contact",
+            })
+        );
+
+        await waitFor(() => {
+            expect(api.post).toHaveBeenCalledTimes(1);
+        });
+
+        expect(api.post).toHaveBeenCalledWith(
+            "/contacts",
+            {
+                firstName: "John",
+                lastName: "",
+                title: "",
+                emails: [
+                    {
+                        email: "john@example.com",
+                        label: "work",
+                    },
+                ],
+                phones: [
+                    {
+                        phone: "03001234567",
+                        label: "mobile",
+                    },
+                ],
+            }
+        );
+
+        expect(
+            mockShowToast
+        ).toHaveBeenCalledWith(
+            "Contact added successfully.",
+            "success"
+        );
+
+        expect(
+            mockNavigate
+        ).toHaveBeenCalledWith(
+            "/contacts"
+        );
+    });
+
+    it("trims contact values before submitting", async () => {
+        api.post.mockResolvedValue({
+            data: {
+                id: 1,
+            },
+        });
+
+        render(<AddContact />);
+
         fireEvent.change(
-            screen.getByPlaceholderText("Phone Number"),
+            screen.getByLabelText(
+                "First Name *"
+            ),
             {
                 target: {
-                    value: "03001234567",
+                    value: "  John  ",
+                },
+            }
+        );
+
+        fireEvent.change(
+            screen.getByLabelText(
+                "Last Name"
+            ),
+            {
+                target: {
+                    value: "  Doe  ",
+                },
+            }
+        );
+
+        fireEvent.change(
+            screen.getByLabelText(
+                "Job Title"
+            ),
+            {
+                target: {
+                    value: "  Software Engineer  ",
+                },
+            }
+        );
+
+        fireEvent.change(
+            screen.getByLabelText(
+                "Email Address"
+            ),
+            {
+                target: {
+                    value: "  john@example.com  ",
+                },
+            }
+        );
+
+        fireEvent.change(
+            screen.getByLabelText(
+                "Phone Number"
+            ),
+            {
+                target: {
+                    value: " 03001234567 ",
                 },
             }
         );
 
         fireEvent.click(
             screen.getByRole("button", {
-                name: "Save Contact",
+                name: "Create Contact",
             })
         );
 
         await waitFor(() => {
-            expect(axios.post).toHaveBeenCalledWith(
-                "http://localhost:8080/api/contacts",
-                {
-                    firstName: "John",
-                    lastName: "Doe",
-                    title: "Manager",
-                    emails: [
-                        {
-                            email: "john@example.com",
-                            label: "Personal",
-                        },
-                    ],
-                    phones: [
-                        {
-                            phone: "03001234567",
-                            label: "Mobile",
-                        },
-                    ],
-                }
-            );
+            expect(api.post).toHaveBeenCalledTimes(1);
         });
 
-        expect(mockNavigate).toHaveBeenCalledWith(
-            "/contacts"
+        expect(api.post).toHaveBeenCalledWith(
+            "/contacts",
+            {
+                firstName: "John",
+                lastName: "Doe",
+                title: "Software Engineer",
+                emails: [
+                    {
+                        email: "john@example.com",
+                        label: "work",
+                    },
+                ],
+                phones: [
+                    {
+                        phone: "03001234567",
+                        label: "mobile",
+                    },
+                ],
+            }
         );
     });
 
-    it("shows saving state while the request is pending", async () => {
+    it("does not submit empty email and phone entries", async () => {
+        api.post.mockResolvedValue({
+            data: {
+                id: 1,
+            },
+        });
+
+        render(<AddContact />);
+
+        fillValidContact();
+
+        fireEvent.click(
+            screen.getByRole("button", {
+                name: "+ Add Email",
+            })
+        );
+
+        fireEvent.click(
+            screen.getByRole("button", {
+                name: "+ Add Phone",
+            })
+        );
+
+        fireEvent.click(
+            screen.getByRole("button", {
+                name: "Create Contact",
+            })
+        );
+
+        await waitFor(() => {
+            expect(api.post).toHaveBeenCalledTimes(1);
+        });
+
+        expect(api.post).toHaveBeenCalledWith(
+            "/contacts",
+            {
+                firstName: "John",
+                lastName: "",
+                title: "",
+                emails: [
+                    {
+                        email: "john@example.com",
+                        label: "work",
+                    },
+                ],
+                phones: [
+                    {
+                        phone: "03001234567",
+                        label: "mobile",
+                    },
+                ],
+            }
+        );
+    });
+
+    it("shows generic error when API request fails", async () => {
+        api.post.mockRejectedValue(
+            new Error("Network error")
+        );
+
+        render(<AddContact />);
+
+        fillValidContact();
+
+        fireEvent.click(
+            screen.getByRole("button", {
+                name: "Create Contact",
+            })
+        );
+
+        expect(
+            await screen.findByText(
+                "Unable to create contact. Please try again."
+            )
+        ).toBeInTheDocument();
+
+        expect(
+            mockNavigate
+        ).not.toHaveBeenCalled();
+    });
+
+    it("shows session expired error for 401 response", async () => {
+        api.post.mockRejectedValue({
+            response: {
+                status: 401,
+            },
+        });
+
+        render(<AddContact />);
+
+        fillValidContact();
+
+        fireEvent.click(
+            screen.getByRole("button", {
+                name: "Create Contact",
+            })
+        );
+
+        expect(
+            await screen.findByText(
+                "Your session has expired. Please login again."
+            )
+        ).toBeInTheDocument();
+
+        expect(
+            mockNavigate
+        ).not.toHaveBeenCalled();
+    });
+
+    it("shows session expired error for 403 response", async () => {
+        api.post.mockRejectedValue({
+            response: {
+                status: 403,
+            },
+        });
+
+        render(<AddContact />);
+
+        fillValidContact();
+
+        fireEvent.click(
+            screen.getByRole("button", {
+                name: "Create Contact",
+            })
+        );
+
+        expect(
+            await screen.findByText(
+                "Your session has expired. Please login again."
+            )
+        ).toBeInTheDocument();
+
+        expect(
+            mockNavigate
+        ).not.toHaveBeenCalled();
+    });
+
+    it("shows server validation error from API response", async () => {
+        api.post.mockRejectedValue({
+            response: {
+                status: 400,
+                data: {
+                    error: "Email already exists",
+                },
+            },
+        });
+
+        render(<AddContact />);
+
+        fillValidContact();
+
+        fireEvent.click(
+            screen.getByRole("button", {
+                name: "Create Contact",
+            })
+        );
+
+        expect(
+            await screen.findByText(
+                "Email already exists"
+            )
+        ).toBeInTheDocument();
+
+        expect(
+            mockNavigate
+        ).not.toHaveBeenCalled();
+    });
+
+    it("disables controls while submitting", async () => {
         let resolveRequest;
 
-        axios.post.mockImplementation(
+        api.post.mockImplementation(
             () =>
                 new Promise((resolve) => {
                     resolveRequest = resolve;
                 })
         );
 
-        renderAddContact();
+        render(<AddContact />);
+
+        fillValidContact();
 
         fireEvent.click(
             screen.getByRole("button", {
-                name: "Save Contact",
+                name: "Create Contact",
             })
         );
 
         expect(
-            screen.getByRole("button", {
-                name: "Saving...",
+            await screen.findByRole("button", {
+                name: "Creating Contact...",
             })
         ).toBeDisabled();
 
         expect(
-            screen.getByPlaceholderText("First Name")
+            screen.getByRole("button", {
+                name: "Back to Contacts",
+            })
         ).toBeDisabled();
 
         expect(
@@ -493,124 +886,31 @@ describe("AddContact", () => {
             })
         ).toBeDisabled();
 
-        resolveRequest({
-            data: { id: 1 },
-        });
-
-        await waitFor(() => {
-            expect(mockNavigate).toHaveBeenCalledWith(
-                "/contacts"
-            );
-        });
-    });
-
-    it("handles an API error without navigating", async () => {
-        axios.post.mockRejectedValue(
-            new Error("Network error")
-        );
-
-        const consoleError = vi
-            .spyOn(console, "error")
-            .mockImplementation(() => {});
-
-        renderAddContact();
-
-        fireEvent.click(
+        expect(
             screen.getByRole("button", {
-                name: "Save Contact",
+                name: "+ Add Email",
             })
-        );
-
-        await waitFor(() => {
-            expect(consoleError).toHaveBeenCalledWith(
-                "Error creating contact:",
-                expect.any(Error)
-            );
-        });
-
-        expect(mockNavigate).not.toHaveBeenCalled();
+        ).toBeDisabled();
 
         expect(
             screen.getByRole("button", {
-                name: "Save Contact",
+                name: "+ Add Phone",
             })
-        ).toBeEnabled();
+        ).toBeDisabled();
 
-        consoleError.mockRestore();
-    });
-
-    it("allows changing the email label to every available option", () => {
-        renderAddContact();
-
-        const label =
-            screen.getByLabelText("Label", {
-                selector: "#email-label-0",
-            });
-
-        fireEvent.change(label, {
-            target: {
-                value: "Work",
+        resolveRequest({
+            data: {
+                id: 1,
             },
         });
 
-        expect(label).toHaveValue("Work");
-
-        fireEvent.change(label, {
-            target: {
-                value: "Other",
-            },
+        await waitFor(() => {
+            expect(
+                mockNavigate
+            ).toHaveBeenCalledWith(
+                "/contacts"
+            );
         });
-
-        expect(label).toHaveValue("Other");
-
-        fireEvent.change(label, {
-            target: {
-                value: "Personal",
-            },
-        });
-
-        expect(label).toHaveValue("Personal");
-    });
-
-    it("allows changing the phone label to every available option", () => {
-        renderAddContact();
-
-        const label =
-            screen.getByLabelText("Label", {
-                selector: "#phone-label-0",
-            });
-
-        fireEvent.change(label, {
-            target: {
-                value: "Home",
-            },
-        });
-
-        expect(label).toHaveValue("Home");
-
-        fireEvent.change(label, {
-            target: {
-                value: "Work",
-            },
-        });
-
-        expect(label).toHaveValue("Work");
-
-        fireEvent.change(label, {
-            target: {
-                value: "Other",
-            },
-        });
-
-        expect(label).toHaveValue("Other");
-
-        fireEvent.change(label, {
-            target: {
-                value: "Mobile",
-            },
-        });
-
-        expect(label).toHaveValue("Mobile");
     });
 });
 

@@ -2648,3 +2648,307 @@ select {
         width: 100%;
     }
 }
+/* ========================================
+   Add Contact
+======================================== */
+
+.add-contact-container {
+    width: min(960px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 40px 0 60px;
+}
+
+/* Header */
+
+.add-contact-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.add-contact-header h1 {
+    margin: 0;
+    color: #172033;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+/* Form Card */
+
+.add-contact-container form {
+    background: #ffffff;
+    border: 1px solid #e5eaf0;
+    border-radius: 14px;
+    padding: 34px;
+    box-shadow:
+        0 6px 18px rgba(16, 24, 40, 0.05),
+        0 1px 3px rgba(16, 24, 40, 0.03);
+}
+
+/* Basic Information Inputs */
+
+.add-contact-container > form > .edit-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 18px;
+}
+
+.add-contact-container .edit-input-wrapper label,
+.add-contact-container .edit-label-wrapper label {
+    color: #344054;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.add-contact-container .edit-input-wrapper input,
+.add-contact-container .edit-label-wrapper select {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #d9e0e8;
+    border-radius: 8px;
+    padding: 11px 12px;
+    background: #ffffff;
+    color: #172033;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.add-contact-container .edit-input-wrapper input::placeholder {
+    color: #98a2b3;
+}
+
+.add-contact-container .edit-input-wrapper input:focus,
+.add-contact-container .edit-label-wrapper select:focus {
+    border-color: #2563eb;
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+.add-contact-container .edit-input-wrapper input:disabled,
+.add-contact-container .edit-label-wrapper select:disabled {
+    background: #f8fafc;
+    cursor: not-allowed;
+}
+
+/* Section Headers */
+
+.add-contact-container .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 30px;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e9edf2;
+}
+
+.add-contact-container .section-header h2 {
+    margin: 0;
+    color: #172033;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* Email and Phone Rows */
+
+.add-contact-container .email-row,
+.add-contact-container .phone-row {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1fr)
+        150px
+        auto;
+    align-items: end;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 15px;
+    border: 1px solid #edf1f5;
+    border-radius: 9px;
+    background: #f8fafc;
+}
+
+.add-contact-container .email-row .edit-input-wrapper,
+.add-contact-container .phone-row .edit-input-wrapper,
+.add-contact-container .email-row .edit-label-wrapper,
+.add-contact-container .phone-row .edit-label-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+/* Row Remove Buttons */
+
+.add-contact-container .email-row button,
+.add-contact-container .phone-row button {
+    height: 40px;
+    border: 1px solid #f0c5c2;
+    border-radius: 8px;
+    padding: 0 13px;
+    background: #ffffff;
+    color: #b42318;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.add-contact-container .email-row button:hover,
+.add-contact-container .phone-row button:hover {
+    background: #fef3f2;
+    border-color: #fda29b;
+}
+
+.add-contact-container .email-row button:disabled,
+.add-contact-container .phone-row button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* Add Email / Add Phone Buttons */
+
+.add-contact-container > form > button[type="button"] {
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 9px 13px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.add-contact-container > form > button[type="button"]:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+}
+
+.add-contact-container > form > button[type="button"]:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* Form Actions */
+
+.add-contact-container .form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 30px;
+    padding-top: 26px;
+    border-top: 1px solid #e9edf2;
+}
+
+.add-contact-container .form-actions button {
+    min-width: 120px;
+    border-radius: 8px;
+    padding: 10px 17px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Cancel */
+
+.add-contact-container .form-actions button[type="button"] {
+    border: 1px solid #d9e0e8;
+    background: #ffffff;
+    color: #344054;
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.add-contact-container .form-actions button[type="button"]:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+/* Save Contact */
+
+.add-contact-container .form-actions button[type="submit"] {
+    border: 0;
+    background: #2563eb;
+    color: #ffffff;
+    box-shadow:
+        0 3px 8px rgba(37, 99, 235, 0.18);
+    transition:
+        background 0.15s ease,
+        transform 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.add-contact-container .form-actions button[type="submit"]:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow:
+        0 5px 12px rgba(37, 99, 235, 0.22);
+}
+
+.add-contact-container .form-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Add Contact Responsive */
+
+@media (max-width: 750px) {
+    .add-contact-container {
+        width: min(100% - 32px, 960px);
+    }
+
+    .add-contact-container form {
+        padding: 26px;
+    }
+
+    .add-contact-container .email-row,
+    .add-contact-container .phone-row {
+        grid-template-columns: 1fr;
+    }
+
+    .add-contact-container .email-row button,
+    .add-contact-container .phone-row button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .add-contact-container {
+        width: calc(100% - 24px);
+        padding-top: 24px;
+    }
+
+    .add-contact-container form {
+        padding: 22px;
+        border-radius: 12px;
+    }
+
+    .add-contact-header h1 {
+        font-size: 24px;
+    }
+
+    .add-contact-container .section-header {
+        margin-top: 24px;
+    }
+
+    .add-contact-container .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .add-contact-container .form-actions button {
+        width: 100%;
+    }
+}
