@@ -652,7 +652,7 @@ JWT_EXPIRATION_MS=3600000
 From the project root:
 
 ```bash
-docker compose up --build
+.\setup-docker.ps1
 ```
 
 Docker Compose starts:
