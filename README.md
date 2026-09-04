@@ -1,398 +1,226 @@
-# cohort-9-java-8620-syed
-Cohort 9 — JAVA Fullstack (JAVA+ReactJS) assignment for Syed Muhammad Fuzail
-Contact Management System
+# Contact Management System
 
-A full-stack Contact Management System built as part of the 10Pearls Java Full Stack internship. The project provides a secure Spring Boot REST API, a React/Vite frontend, SQL Server persistence, JWT authentication, automated testing, code coverage, and SonarQube code-quality analysis.
+> **Cohort 9 — JAVA Fullstack (Java + ReactJS) assignment**  
+> A full-stack Contact Management System built with **Java 21, Spring Boot, Spring Security, JWT, JPA/Hibernate, Flyway, Microsoft SQL Server, React, Vite, Axios, and Nginx**.
 
-Table of Contents
+---
 
-Project Overview
+## 📌 Overview
 
-Features
+The Contact Management System is a full-stack web application that allows authenticated users to maintain their personal contact list.
 
-Architecture
+The application provides:
 
-Technology Stack
+- User registration using **email or phone number**
+- User login using **email or phone number**
+- JWT-based authentication
+- Protected application routes
+- View, search, paginate, create, edit, and delete contacts
+- Multiple email addresses per contact
+- Multiple phone numbers per contact
+- Labels for contact email addresses and phone numbers
+- User profile
+- Change-password functionality
+- Form validation and error handling
+- Toast notifications
+- SQL Server persistence
+- Flyway database migrations
+- Dockerized frontend, backend, and database
+- Automated backend and frontend tests
+- JaCoCo test coverage support
+- SonarQube configuration
 
-Project Structure
+---
 
-Backend
+## ✨ Main Features
 
-Backend Architecture
+### Authentication
 
-Authentication and Security
+The authentication module supports:
 
-Backend API
+1. **Registration**
+   - First name and last name
+   - Email or phone number
+   - Password
+   - Duplicate email/phone validation
+   - Password hashing using Spring Security's password encoder
 
-Validation and Error Handling
+2. **Login**
+   - Login with either email or phone
+   - JWT token generation after successful authentication
+   - Invalid credentials are handled without exposing sensitive information
 
-Database
+3. **Authenticated session**
+   - JWT is stored by the frontend
+   - Axios automatically sends the JWT as a `Bearer` token for protected API calls
+   - Protected React routes redirect unauthenticated users to `/login`
 
-Flyway Migrations
+4. **Change password**
+   - Requires the current password
+   - Requires a new password
+   - Prevents reusing the current password
 
-Backend Testing
-
-JaCoCo Coverage
-
-Frontend
-
-Frontend Pages
-
-Routing
-
-Authentication Context
-
-API Integration
-
-Forms and Validation
-
-Toast Notifications
-
-Frontend Testing
-
-SonarQube Integration
-
-Backend SonarQube
-
-Frontend SonarQube
-
-Coverage Integration
-
-Run Analysis
-
-Current Frontend Quality Result
-
-Installation and Setup
-
-Running the Application
-
-Testing Commands
-
-Build Commands
-
-Environment and Security
-
-Git and Pull Request Workflow
-
-Troubleshooting
-
-Development Notes
-
-Project Overview
-
-The Contact Management System allows authenticated users to manage their personal contacts through a web application.
-
-The system consists of two main applications:
-
-Backend — Java/Spring Boot REST API
-
-Frontend — React/Vite single-page application
-
-The backend communicates with Microsoft SQL Server for persistent storage.
-
-The frontend communicates with the backend through REST APIs using Axios.
-
-Authentication is implemented using stateless JWT tokens.
-
-High-Level Flow
-
-                         Contact Management System
-                                    |
-                    +---------------+---------------+
-                    |                               |
-                Frontend                         Backend
-             React + Vite                   Spring Boot REST API
-                    |                               |
-                    |          HTTP/JSON             |
-                    +------------------------------>|
-                                                    |
-                                             Spring Security
-                                                    |
-                                               JWT Filter
-                                                    |
-                                                Services
-                                                    |
-                                              Repositories
-                                                    |
-                                               Hibernate/JPA
-                                                    |
-                                               SQL Server
-
-Features
-
-Authentication
-
-User registration
-
-User login
-
-JWT-based authentication
-
-Authenticated-user profile retrieval
-
-Change password
-
-BCrypt password hashing
-
-Stateless Spring Security configuration
-
-Protected frontend routes
-
-Automatic JWT Authorization header through Axios
-
-Contact Management
+### Contact Management
 
 Authenticated users can:
 
-View contacts
+- View their contacts
+- Search contacts by first or last name
+- Navigate through paginated contact results
+- Add a new contact
+- Add multiple email addresses
+- Add multiple phone numbers
+- Assign labels such as work/personal
+- Open a contact's details
+- Edit an existing contact
+- Delete a contact with confirmation
 
-Search contacts
+### User Profile
 
-Paginate contacts
+The profile page displays the authenticated user's information and provides access to:
 
-View an individual contact
+- Change Password
+- Logout
 
-Create contacts
+---
 
-Edit contacts
+## 🖼️ Application Screenshots
 
-Delete contacts
+The project already contains the screenshots in the `Screenshots/` directory.
 
-Store multiple email addresses
+### Login
 
-Store multiple phone numbers
+The login screen allows a user to authenticate with an email address or phone number.
 
-Assign labels to email and phone entries
+![Login Screen](<Screenshots/Screenshot 2026-09-03 105827.png>)
 
-Frontend User Experience
+### Registration
 
-React single-page application
+The registration screen allows a new user to create an account.
 
-Client-side routing
+![Registration Screen](<Screenshots/Screenshot 2026-09-03 105019.png>)
 
-Protected routes
+### Contacts List
 
-Form validation
+The contacts page displays the user's contacts and provides search, pagination, and contact actions.
 
-Loading states
+![Contacts List](<Screenshots/Screenshot 2026-09-03 105146.png>)
 
-Error handling
+### Contact Details
 
-Toast notifications
+The details page displays the selected contact, including email addresses, phone numbers, labels, and additional information.
 
-Responsive contact-management workflow
+![Contact Details](<Screenshots/Screenshot 2026-09-03 105306.png>)
 
-Dynamic email and phone fields
+### Edit Contact
 
-Quality and Testing
+The edit screen allows existing contact information, email addresses, and phone numbers to be updated.
 
-Backend unit/integration testing
+![Edit Contact](<Screenshots/Screenshot 2026-09-03 105421.png>)
 
-Frontend component/page testing
+### Delete Confirmation
 
-Vitest
+A confirmation dialog is shown before deleting a contact.
 
-React Testing Library
+![Delete Confirmation](<Screenshots/Screenshot 2026-09-03 105650.png>)
 
-Testcontainers for SQL Server testing
+### User Profile
 
-JaCoCo backend coverage
+The profile page displays the authenticated user's account information.
 
-Vitest/V8 frontend coverage
+![User Profile](<Screenshots/Screenshot 2026-09-03 105721.png>)
 
-SonarQube static analysis
+### Change Password
 
-SonarQube Quality Gate
+The change-password dialog lets the authenticated user update their password.
 
-Architecture
+![Change Password](<Screenshots/Screenshot 2026-09-03 105746.png>)
 
-Overall Architecture
+---
 
+## 🏗️ Architecture
+
+The application is organized as a three-part stack:
+
+```text
+                    ┌─────────────────────────┐
+                    │       React Frontend     │
+                    │   React + Vite + Axios   │
+                    └────────────┬────────────┘
+                                 │
+                           HTTP / JSON
+                                 │
+                                 ▼
+                    ┌─────────────────────────┐
+                    │     Spring Boot API     │
+                    │ Security + JWT + JPA    │
+                    └────────────┬────────────┘
+                                 │
+                           JDBC / JPA
+                                 │
+                                 ▼
+                    ┌─────────────────────────┐
+                    │    Microsoft SQL Server │
+                    │      contact_management │
+                    └─────────────────────────┘
+```
+
+### Docker architecture
+
+When using Docker Compose:
+
+```text
 Browser
-   |
-   | HTTP / JSON
-   v
-React + Vite Frontend
-   |
-   | Axios
-   | Authorization: Bearer <JWT>
-   v
-Spring Boot REST API
-   |
-   +--> Spring Security / JWT
-   |
-   +--> Controllers
-   |
-   +--> Services
-   |
-   +--> Repositories
-   |
-   +--> Hibernate / JPA
-   |
-   v
-Microsoft SQL Server
-
-Backend Layering
-
-Controller
-    |
-    v
-Service
-    |
-    v
-Repository
-    |
-    v
-Database
-
-Cross-cutting functionality includes:
-
-JWT security
-
-Validation
-
-Exception handling
-
-Logging
-
-Database migrations
-
-Technology Stack
-
-Backend
-
-Technology
-
-Purpose
-
-Java 21
-
-Programming language
-
-Spring Boot 4.1.0
-
-Backend framework
-
-Spring Web MVC
-
-REST API
-
-Spring Data JPA
-
-Persistence
-
-Hibernate
-
-ORM
-
-Spring Security
-
-Authentication and authorization
-
-JJWT 0.12.6
-
-JWT handling
-
-BCrypt
-
-Password hashing
-
-Microsoft SQL Server
-
-Database
-
-Flyway
-
-Database migrations
-
-Maven Wrapper
-
-Build and dependency management
-
-JUnit / Spring Boot Test
-
-Automated tests
-
-Mockito
-
-Mocking in tests where applicable
-
-Testcontainers
-
-SQL Server integration testing
-
-JaCoCo 0.8.13
-
-Code coverage
-
-SonarQube Maven Scanner
-
-Static analysis
-
-SLF4J / Logback
-
-Logging
-
-Frontend
-
-Technology
-
-Purpose
-
-React 19
-
-User interface
-
-React DOM
-
-Browser rendering
-
-Vite
-
-Development/build tooling
-
-React Router DOM
-
-Client-side routing
-
-Axios
-
-API communication
-
-Vitest
-
-Test runner
-
-React Testing Library
-
-Component/page testing
-
-Testing Library User Event
-
-User interaction testing
-
-Jest DOM
-
-DOM assertions
-
-jsdom
-
-Browser-like test environment
-
-V8 Coverage
-
-Test coverage
-
-Oxlint
-
-Linting
-
-sonar-scanner
-
-SonarQube analysis
-
-Project Structure
-
+   │
+   ▼
+localhost:3000
+   │
+   ▼
+Nginx / React
+   │
+   │ /api/*
+   ▼
+Backend :8080
+   │
+   ▼
+SQL Server :1433
+```
+
+The frontend Nginx configuration proxies `/api/` requests to the backend container.
+
+---
+
+## 🧰 Technology Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React 19 |
+| Frontend build tool | Vite |
+| Routing | React Router |
+| HTTP client | Axios |
+| Frontend testing | Vitest + Testing Library + jsdom |
+| Frontend linting | Oxlint |
+| Backend | Java 21 |
+| Backend framework | Spring Boot 4.1.0 |
+| Web/API | Spring MVC |
+| Security | Spring Security |
+| Authentication | JWT |
+| Persistence | Spring Data JPA / Hibernate |
+| Database | Microsoft SQL Server |
+| Database migrations | Flyway |
+| Validation | Jakarta Validation |
+| Code generation | Lombok |
+| Backend testing | Spring Boot Test + JUnit + Testcontainers |
+| Coverage | JaCoCo |
+| Code quality | SonarQube |
+| Containerization | Docker + Docker Compose |
+| Frontend web server | Nginx |
+
+---
+
+## 📁 Project Structure
+
+```text
 cohort-9-java-8620-syed/
 │
 ├── backend/
@@ -406,1137 +234,842 @@ cohort-9-java-8620-syed/
 │   │   │   │   ├── exception/
 │   │   │   │   ├── repository/
 │   │   │   │   ├── security/
-│   │   │   │   ├── service/
-│   │   │   │   └── BackendApplication.java
+│   │   │   │   └── service/
 │   │   │   └── resources/
+│   │   │       ├── db/migration/
 │   │   │       ├── application.properties
-│   │   │       └── db/migration/
+│   │   │       └── application-local.properties
 │   │   └── test/
 │   │       └── java/com/contactmanagement/backend/
+│   ├── Dockerfile
 │   ├── pom.xml
-│   ├── mvnw
-│   └── mvnw.cmd
+│   └── mvnw
 │
 ├── frontend/
-│   ├── public/
 │   ├── src/
+│   │   ├── assets/
 │   │   ├── components/
 │   │   ├── context/
 │   │   ├── pages/
 │   │   ├── services/
-│   │   ├── test/
 │   │   ├── App.jsx
-│   │   ├── App.css
-│   │   └── index.css
+│   │   └── main.jsx
+│   ├── Dockerfile
+│   ├── nginx.conf
 │   ├── package.json
-│   ├── package-lock.json
-│   ├── vite.config.js
-│   └── sonar-project.properties
+│   └── vite.config.js
 │
+├── Screenshots/
+│   └── application screenshots
+│
+├── docker-compose.yml
+├── .env.example
 └── README.md
+```
 
-Generated directories such as target, node_modules, coverage, .scannerwork, and build output are not intended to be committed.
+---
 
-Backend
+# 🔐 Authentication & Authorization
 
-Backend Architecture
+The backend uses **Spring Security + JWT**.
+
+### Authentication flow
+
+```text
+User
+ │
+ │ Login / Register
+ ▼
+React Frontend
+ │
+ │ POST /api/auth/login
+ ▼
+Spring Boot
+ │
+ │ Validate credentials
+ ▼
+JWT Service
+ │
+ │ Generate signed token
+ ▼
+React
+ │
+ │ Store token
+ ▼
+Protected API Requests
+ │
+ │ Authorization: Bearer <JWT>
+ ▼
+JwtAuthenticationFilter
+ │
+ ▼
+Authenticated Controller
+```
+
+The frontend's Axios instance automatically reads the token from `localStorage` and adds it to protected requests.
+
+Public authentication requests are excluded from the Authorization header:
+
+- `/api/auth/login`
+- `/api/auth/register`
+
+---
+
+# 🌐 API Endpoints
+
+The backend is exposed under `/api`.
+
+## Authentication
+
+| Method | Endpoint | Authentication | Description |
+|---|---|---|---|
+| `POST` | `/api/auth/register` | No | Register a new user |
+| `POST` | `/api/auth/login` | No | Login using email or phone |
+| `GET` | `/api/auth/me` | Yes | Get authenticated user |
+| `PUT` | `/api/auth/change-password` | Yes | Change current password |
+
+## Contacts
+
+| Method | Endpoint | Authentication | Description |
+|---|---|---|---|
+| `GET` | `/api/contacts` | Yes | List contacts |
+| `GET` | `/api/contacts/{id}` | Yes | Get one contact |
+| `POST` | `/api/contacts` | Yes | Create contact |
+| `PUT` | `/api/contacts/{id}` | Yes | Update contact |
+| `DELETE` | `/api/contacts/{id}` | Yes | Delete contact |
+
+### Contact search and pagination
+
+The contacts endpoint supports:
+
+```text
+GET /api/contacts?search=John&page=0&size=10
+```
+
+- `search` — optional first-name/last-name search
+- `page` — zero-based page number
+- `size` — page size, from 1 to 100
+
+---
+
+# 🗄️ Database Design
+
+The application uses Microsoft SQL Server.
+
+### Main tables
+
+```text
+users
+  │
+  │ 1-to-many
+  ▼
+contacts
+  │
+  ├──────────────► contact_emails
+  │
+  └──────────────► contact_phones
+```
+
+### `users`
+
+Stores application users.
+
+Important fields:
+
+- `id`
+- `email`
+- `phone`
+- `password`
+- `first_name`
+- `last_name`
+- `created_at`
+- `updated_at`
+
+A user must have at least an email address or phone number.
+
+### `contacts`
+
+Stores contacts belonging to an authenticated user.
+
+Important fields:
+
+- `id`
+- `user_id`
+- `first_name`
+- `last_name`
+- `title`
+- `created_at`
+- `updated_at`
+
+### `contact_emails`
+
+Allows each contact to have multiple email addresses.
+
+Fields:
+
+- `id`
+- `contact_id`
+- `email`
+- `label`
+
+### `contact_phones`
+
+Allows each contact to have multiple phone numbers.
+
+Fields:
+
+- `id`
+- `contact_id`
+- `phone`
+- `label`
+
+Foreign keys use cascading deletion so child contact records are removed when their parent contact is deleted.
+
+---
+
+# 🔄 Database Migrations
+
+Flyway migrations are located at:
+
+```text
+backend/src/main/resources/db/migration/
+```
+
+### V1 — Users
+
+`V1__create_users_table.sql`
+
+Creates the `users` table with unique email/phone constraints and the requirement that at least one identifier is supplied.
+
+### V2 — Contacts
+
+`V2__create_contacts_tables.sql`
+
+Creates:
+
+- `contacts`
+- `contact_emails`
+- `contact_phones`
+
+and their foreign-key relationships.
+
+### V3 — Nullable identifier uniqueness
+
+`V3__fix_nullable_user_identifier_uniqueness.sql`
+
+Replaces the original uniqueness constraints with filtered unique indexes so multiple `NULL` values are handled correctly while non-null email and phone values remain unique.
+
+---
+
+# 🧩 Backend Layers
 
 The backend follows a layered architecture.
 
-Controllers
+### Controllers
 
-The API controllers are:
+Located in:
 
-AuthController
+```text
+backend/src/main/java/com/contactmanagement/backend/controller/
+```
 
-ContactController
+Controllers expose REST endpoints and receive authenticated requests.
 
-Services
+Main controllers:
 
-Business logic is separated into:
+- `AuthController`
+- `ContactController`
 
-AuthService
+### Services
 
-ContactService
+Located in:
 
-UserService
+```text
+backend/src/main/java/com/contactmanagement/backend/service/
+```
 
-Repositories
+Main services:
 
-Persistence is handled through:
+- `AuthService`
+- `ContactService`
+- `UserService`
 
-UserRepository
+Business logic is kept in the service layer rather than directly in controllers.
 
-ContactRepository
+### Repositories
 
-ContactEmailRepository
+Located in:
 
-ContactPhoneRepository
+```text
+backend/src/main/java/com/contactmanagement/backend/repository/
+```
 
-Entities
+Repositories provide database access through Spring Data JPA.
 
-The primary domain entities are:
+### DTOs
 
-User
+Located in:
 
-Contact
+```text
+backend/src/main/java/com/contactmanagement/backend/dto/
+```
 
-ContactEmail
-
-ContactPhone
-
-DTOs
-
-DTOs are used for API requests and responses, including:
-
-Registration
-
-Login
-
-Change password
-
-Contact requests/responses
-
-Email and phone entries
-
-User responses
-
-Authentication and Security
-
-The backend uses stateless JWT authentication.
-
-Public endpoints
-
-The following endpoints are available without authentication:
-
-POST /api/auth/register
-POST /api/auth/login
-
-Protected endpoints
-
-Authenticated requests require a valid JWT.
-
-The JWT is sent through:
-
-Authorization: Bearer <JWT>
-
-The JwtAuthenticationFilter reads the Authorization header, validates/extracts the token information, and establishes the authenticated security context.
-
-Spring Security is configured for:
-
-Stateless sessions
-
-Disabled form login
-
-Disabled HTTP Basic authentication
-
-JWT authentication filter
-
-CORS
-
-Protected application endpoints
-
-BCrypt password encoding
-
-Password Security
-
-Passwords are encoded using:
-
-BCryptPasswordEncoder
-
-Passwords are never intended to be stored as plain text.
-
-Backend API
-
-Base URL:
-
-http://localhost:8080/api
-
-Authentication API
-
-Register
-
-POST /api/auth/register
-
-Creates a new user.
-
-Response:
-
-201 Created
-
-Login
-
-POST /api/auth/login
-
-Authenticates a user and returns login information including the JWT.
-
-Response:
-
-200 OK
-
-Current User
-
-GET /api/auth/me
-
-Requires authentication.
-
-Returns the currently authenticated user's information.
-
-Change Password
-
-PUT /api/auth/change-password
-
-Requires authentication.
-
-Changes the authenticated user's password after validating the request.
-
-Contact API
-
-Get Contacts
-
-GET /api/contacts
-
-Supports:
-
-Search
-
-Page number
-
-Page size
+DTOs separate API request/response models from persistence entities.
 
 Examples:
 
-GET /api/contacts?page=0&size=10
-GET /api/contacts?search=john&page=0&size=10
+- `RegisterRequest`
+- `LoginRequest`
+- `LoginResponse`
+- `ContactRequest`
+- `ContactResponse`
+- `ChangePasswordRequest`
 
-Page size is constrained to a maximum of 100.
+### Security
 
-Get Contact
+Located in:
 
-GET /api/contacts/{id}
+```text
+backend/src/main/java/com/contactmanagement/backend/security/
+```
 
-Returns one contact belonging to the authenticated user.
+Important classes:
 
-Create Contact
+- `JwtService`
+- `JwtAuthenticationFilter`
 
-POST /api/contacts
+---
 
-Creates a contact.
+# ⚛️ Frontend Structure
 
-A contact can contain:
+The React application uses page-based routing.
 
-First name
+### Pages
 
-Last name
+Located in:
 
-Title
+```text
+frontend/src/pages/
+```
 
-Multiple emails
+Available pages:
 
-Multiple phone numbers
+- `Login.jsx`
+- `Register.jsx`
+- `Contacts.jsx`
+- `AddContact.jsx`
+- `ContactDetails.jsx`
+- `EditContact.jsx`
+- `Profile.jsx`
 
-Update Contact
+### Components
 
-PUT /api/contacts/{id}
+Located in:
 
-Updates an existing contact belonging to the authenticated user.
+```text
+frontend/src/components/
+```
 
-Delete Contact
+Includes reusable UI such as toast notifications.
 
-DELETE /api/contacts/{id}
+### Context
 
-Deletes an existing contact.
+Located in:
 
-Successful deletion returns:
+```text
+frontend/src/context/
+```
 
-204 No Content
+Includes:
 
-Validation and Error Handling
+- `AuthContext`
+- `ToastContext`
 
-The backend uses Jakarta Bean Validation.
+`AuthContext` manages authentication state, while `ToastContext` provides application-wide notifications.
 
-Validation covers request fields such as:
+### API service
 
-Required values
+Located at:
 
-Email format
-
-Password length
-
-Name length
-
-Title length
-
-Phone/email length
-
-Nested email entries
-
-Nested phone entries
-
-Controllers use @Valid for request-body validation.
-
-The application also validates pagination parameters.
-
-GlobalExceptionHandler provides centralized exception handling so error processing is consistent across the API.
-
-Database
-
-The application uses:
-
-Microsoft SQL Server
-
-Database:
-
-contact_management
-
-Hibernate/JPA handles ORM and persistence.
-
-Hibernate schema validation is configured with:
-
-spring.jpa.hibernate.ddl-auto=validate
-
-This means the application validates the existing schema rather than automatically generating or modifying it.
-
-Flyway Migrations
-
-Database schema changes are managed through Flyway.
-
-Current migration files include:
-
-V1__create_users_table.sql
-V2__create_contacts_tables.sql
-V3__fix_nullable_user_identifier_uniqueness.sql
-
-Flyway provides version-controlled database schema evolution.
-
-Important Migration Rule
-
-Once a migration has already been applied, do not modify it casually.
-
-For a new database change, create a new versioned migration.
-
-Backend Testing
-
-Backend tests are located under:
-
-backend/src/test/java/
-
-The project includes tests for:
-
-Application startup/context
-
-Authentication service
-
-Contact service
-
-Contact controller
-
-Database-backed integration scenarios
-
-Testcontainers is configured for SQL Server integration testing.
-
-Run:
-
-cd backend
-.\mvnw.cmd test
-
-JaCoCo Coverage
-
-JaCoCo is configured in the backend Maven build.
-
-Run:
-
-cd backend
-.\mvnw.cmd clean test
-
-Coverage reports are generated under:
-
-backend/target/site/jacoco/
-
-Generated coverage/build files should remain untracked.
-
-Frontend
-
-Frontend Pages
-
-The React application contains the following major pages:
-
-Login
-
-Authenticates an existing user.
-
-/login
-
-Register
-
-Creates a new user account.
-
-/register
-
-Contacts
-
-Displays the authenticated user's contacts.
-
-/contacts
-
-Add Contact
-
-Creates a new contact.
-
-/contacts/new
-
-Contact Details
-
-Displays a specific contact.
-
-/contacts/:id
-
-Edit Contact
-
-Edits an existing contact.
-
-/contacts/:id/edit
-
-Profile
-
-Displays and manages authenticated-user profile functionality.
-
-/profile
-
-Routing
-
-React Router DOM is used for client-side routing.
-
-Protected routes are wrapped with ProtectedRoute.
-
-If an unauthenticated user attempts to access a protected route, the application redirects to:
-
-/login
-
-The application also handles:
-
-/
-
-by redirecting to login, and unknown routes are redirected to login.
-
-Authentication Context
-
-Authentication state is managed through:
-
-frontend/src/context/AuthContext.jsx
-
-The context manages:
-
-Current user
-
-Authentication state
-
-Loading state
-
-Login
-
-Logout
-
-On application startup, an existing token can be used to request:
-
-GET /api/auth/me
-
-If the token is no longer valid, the frontend clears the stored authentication token.
-
-API Integration
-
-Axios is configured in:
-
+```text
 frontend/src/services/api.js
+```
 
-Base URL:
+Axios is configured with:
 
-http://localhost:8080/api
+```text
+baseURL: /api
+```
 
-The Axios request interceptor reads:
+and an interceptor that attaches the JWT to protected requests.
 
-token
+---
 
-from browser local storage.
+# 🐳 Running the Full Application with Docker
 
-When a token is available, Axios adds:
+Docker Compose is the recommended way to run the complete stack because it starts the database, backend, and frontend together.
 
-Authorization: Bearer <JWT>
-
-to API requests.
-
-This connects the React frontend with the secured Spring Boot backend.
-
-Forms and Validation
-
-The frontend performs client-side validation before sending form data.
-
-The Add Contact and Edit Contact pages support dynamic email and phone fields.
-
-Each dynamic entry receives a stable identifier using:
-
-crypto.randomUUID()
-
-The identifier is used for React rendering and is removed before sending the API payload.
-
-This avoids unstable index-based React keys.
-
-The frontend also handles API validation and error responses.
-
-Toast Notifications
-
-Toast functionality is implemented using:
-
-ToastContext.jsx
-Toast.jsx
-
-The context manages notification state while the reusable Toast component renders notifications.
-
-The application uses toast feedback for successful operations and errors.
-
-Frontend Testing
-
-Frontend tests use:
-
-Vitest
-
-React Testing Library
-
-Testing Library User Event
-
-Jest DOM
-
-jsdom
-
-V8 coverage
-
-Tests cover:
-
-components/
-context/
-pages/
-services/
-
-Including:
-
-Toast
-
-Authentication context
-
-Toast context
-
-Login
-
-Register
-
-Contacts
-
-Add Contact
-
-Edit Contact
-
-Profile
-
-API service
-
-Run all frontend tests:
-
-cd frontend
-npm test -- --run
-
-Run coverage:
-
-npm run test:coverage
-
-SonarQube Integration
-
-SonarQube is integrated into the project to perform static analysis and display quality metrics.
-
-The project contains separate configurations for backend and frontend analysis.
-
-Local SonarQube server:
-
-http://localhost:9000
-
-Backend SonarQube
-
-Backend SonarQube properties are configured in pom.xml:
-
-<sonar.projectKey>contact-management-backend</sonar.projectKey>
-<sonar.projectName>Contact Management Backend</sonar.projectName>
-<sonar.host.url>http://localhost:9000</sonar.host.url>
-
-The Maven SonarQube scanner is configured with:
-
-org.sonarsource.scanner.maven:sonar-maven-plugin
-
-Version:
-
-5.4.0.6343
-
-Backend analysis can be run with:
-
-cd backend
-.\mvnw.cmd clean verify sonar:sonar
-
-Frontend SonarQube
-
-The frontend configuration is stored in:
-
-frontend/sonar-project.properties
-
-Current configuration:
-
-sonar.projectKey=contact-management-frontend
-sonar.projectName=Contact Management Frontend
-sonar.projectVersion=1.0
-
-sonar.sources=src
-sonar.exclusions=**/node_modules/**,**/dist/**,**/src/assets/**
-
-sonar.sourceEncoding=UTF-8
-
-sonar.javascript.lcov.reportPaths=coverage/lcov.info
-
-The frontend scanner is installed as a development dependency and can be executed with:
-
-npx sonar-scanner
-
-Coverage Integration
-
-Frontend coverage is generated using Vitest and V8.
-
-Run:
-
-cd frontend
-npm run test:coverage
-
-The LCOV report is generated at:
-
-frontend/coverage/lcov.info
-
-SonarQube reads it through:
-
-sonar.javascript.lcov.reportPaths=coverage/lcov.info
-
-The complete quality workflow is:
-
-React Source
-    ↓
-Vitest Tests
-    ↓
-V8 Coverage
-    ↓
-coverage/lcov.info
-    ↓
-SonarQube Scanner
-    ↓
-SonarQube Dashboard
-
-Run Analysis
-
-Frontend
-
-Start SonarQube first, then:
-
-cd frontend
-npm install
-npm run test:coverage
-npx sonar-scanner
-
-Backend
-
-cd backend
-.\mvnw.cmd clean verify sonar:sonar
-
-Current Frontend Quality Result
-
-The frontend SonarQube analysis has been successfully executed.
-
-Current dashboard result:
-
-Metric
-
-Result
-
-Quality Gate
-
-PASSED
-
-Security
-
-A / 0
-
-Reliability
-
-B / 1
-
-Maintainability
-
-A / 22
-
-Security Issues
-
-0
-
-Coverage
-
-93.2%
-
-Duplications
-
-0.5%
-
-Lines of Code
-
-5.1k
-
-Hotspots Reviewed
-
-A
-
-Quality Gate
-
-The current frontend project has:
-
-Quality Gate: PASSED
-
-The existing reliability finding remains in the SonarQube report, but it does not prevent the current Quality Gate from passing.
-
-Installation and Setup
-
-Prerequisites
+## 1. Prerequisites
 
 Install:
 
-Backend
+- Docker Desktop
+- Git
 
-Java 21
+Verify Docker:
 
-Microsoft SQL Server
+```bash
+docker --version
+docker compose version
+```
 
-Docker Desktop if running Testcontainers integration tests
+## 2. Configure environment variables
 
-SonarQube if performing local analysis
+Copy:
 
-Frontend
+```text
+.env.example
+```
 
-Node.js
+to:
 
-npm
+```text
+.env
+```
 
-The project was developed/tested with:
+Then provide your own values for:
 
-Node.js: v24.12.0
-npm: 11.12.0
-Java: 21
+```env
+MSSQL_SA_PASSWORD=your_strong_sql_server_password
+JWT_SECRET=your_base64_encoded_jwt_secret
+JWT_EXPIRATION_MS=3600000
+```
 
-Backend Setup
+**Do not commit `.env` to source control.**
+
+## 3. Start the application
 
 From the project root:
 
-cd backend
+```bash
+docker compose up --build
+```
 
-The Maven Wrapper is included, so a global Maven installation is not required.
+Docker Compose starts:
 
-Make sure SQL Server is running and the required database is available.
+1. SQL Server
+2. Database initialization
+3. Spring Boot backend
+4. React frontend served by Nginx
 
-The local backend configuration is kept separately in:
-
-src/main/resources/application-local.properties
-
-This file is ignored by Git because it contains local machine/database configuration.
-
-Environment and Security
-
-The JWT secret is not hardcoded in the shared application configuration.
-
-The backend uses:
-
-jwt.secret=${JWT_SECRET}
-
-Set the secret locally through an environment variable.
-
-PowerShell example:
-
-$env:JWT_SECRET="your-base64-encoded-secret"
-
-Do not commit:
-
-JWT secrets
-
-Database passwords
-
-Private credentials
-
-Local database configuration
-
-The local database configuration file is intentionally ignored:
-
-backend/src/main/resources/application-local.properties
-
-Running the Application
-
-The backend and frontend run separately.
-
-Terminal 1 — Backend
-
-cd D:\cohort-9-java-8620-syed\backend
-.\mvnw.cmd spring-boot:run
-
-Backend:
-
-http://localhost:8080
-
-Terminal 2 — Frontend
-
-cd D:\cohort-9-java-8620-syed\frontend
-npm install
-npm run dev
+## 4. Open the application
 
 Frontend:
 
-http://localhost:5173
+```text
+http://localhost:3000
+```
 
-Application Flow
+Backend:
 
-http://localhost:5173
-        |
-        | Axios
-        v
-http://localhost:8080/api
-        |
-        v
-Microsoft SQL Server
-
-Testing Commands
-
-Backend
-
-Run tests:
-
-cd backend
-.\mvnw.cmd test
-
-Clean and test:
-
-.\mvnw.cmd clean test
-
-Frontend
-
-Run tests once:
-
-cd frontend
-npm test -- --run
-
-Run coverage:
-
-npm run test:coverage
-
-Run lint:
-
-npm run lint
-
-Build Commands
-
-Backend
-
-cd backend
-.\mvnw.cmd clean package
-
-Frontend
-
-cd frontend
-npm run build
-
-Preview the production frontend:
-
-npm run preview
-
-Git and Pull Request Workflow
-
-The project was developed using separate feature branches and pull requests.
-
-Current implementation sequence:
-
-PR01
-Project Setup
-    ↓
-PR02
-Backend Implementation
-    ↓
-PR03
-Frontend Implementation + SonarQube Integration
-    ↓
-PR04
-Documentation
-
-PR01 — Project Setup
-
-Branch:
-
-feature/project-setup
-
-Purpose:
-
-Initial project structure
-
-Initial setup/configuration
-
-PR02 — Backend Implementation
-
-Branch:
-
-feature/backend-implementation
-
-Purpose:
-
-Spring Boot backend
-
-REST APIs
-
-Database
-
-Authentication
-
-JWT security
-
-Contact management
-
-Testing and backend quality configuration
-
-PR03 — Frontend + SonarQube
-
-Branch:
-
-feature/frontend-implementation
-
-Purpose:
-
-React frontend
-
-Routing
-
-Authentication UI
-
-Contact-management UI
-
-Axios integration
-
-Frontend tests
-
-Coverage
-
-SonarQube integration
-
-PR04 — Documentation
-
-The planned documentation PR is intended to contain the project's consolidated documentation.
-
-The clean workflow is to create the documentation branch after PR03 has been merged, so PR04 does not accidentally include PR03's implementation commits.
-
-Troubleshooting
-
-Backend Cannot Connect to SQL Server
-
-Check that:
-
-SQL Server is running.
-
-The contact_management database exists.
-
-Local datasource configuration is correct.
-
-The configured authentication method matches the JDBC connection configuration.
-
-The SQL Server instance is accepting the expected connection.
-
-Frontend Cannot Reach Backend
-
-Verify the backend is running:
-
+```text
 http://localhost:8080
+```
 
-Verify the frontend API service uses:
+The browser application should normally be accessed through the frontend URL.
 
-http://localhost:8080/api
+## 5. Stop the application
 
-Also verify that the backend CORS configuration allows:
+```bash
+docker compose down
+```
 
-http://localhost:5173
+To also remove the persistent SQL Server volume:
 
-JWT Authentication Fails
+```bash
+docker compose down -v
+```
 
-Verify that:
+> `-v` deletes the Docker database volume and therefore removes persisted database data.
 
-JWT_SECRET
+---
 
-is set correctly.
+# 💻 Running Backend Locally
 
-PowerShell:
+The backend uses **Java 21** and Maven.
 
-$env:JWT_SECRET="your-base64-encoded-secret"
+## Requirements
 
-If an old/invalid token is stored in browser local storage, log in again after clearing the invalid token.
+- Java 21
+- Microsoft SQL Server
+- Maven, or the included Maven Wrapper
 
-Frontend Coverage Is Missing in SonarQube
+Configure the local Spring profile in:
 
-Run:
-
-cd frontend
-npm run test:coverage
-
-Verify:
-
-coverage/lcov.info
-
-exists.
+```text
+backend/src/main/resources/application-local.properties
+```
 
 Then run:
 
-npx sonar-scanner
+### Linux/macOS
 
-SonarQube Scanner Cannot Connect
+```bash
+cd backend
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+```
 
-Make sure SonarQube is running at:
+### Windows
 
-http://localhost:9000
+```bat
+cd backend
+mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=local
+```
 
-Then retry:
+The backend runs on:
 
-npx sonar-scanner
+```text
+http://localhost:8080
+```
 
-Generated Files Appear in Git
+---
 
-The frontend .gitignore excludes:
+# 💻 Running Frontend Locally
 
-.scannerwork/
-coverage/
+## Requirements
 
-The backend .gitignore excludes generated Maven output such as:
+- Node.js
+- npm
 
-target/
+Install dependencies:
 
-Do not commit generated analysis/build directories.
+```bash
+cd frontend
+npm install
+```
 
-Development Notes
+Run the Vite development server:
 
-Database Schema
+```bash
+npm run dev
+```
 
-Use Flyway migrations for schema changes.
+Vite normally starts the frontend at:
 
-Do not modify an already-applied migration unless you fully understand the migration/checksum implications. Prefer creating a new migration for new schema changes.
+```text
+http://localhost:5173
+```
 
-Security
+> The Docker setup is the simplest full-stack configuration because the included Nginx configuration proxies `/api/` requests to the backend container.
 
-Never place secrets directly in source code.
+---
 
-Use:
+# 🧪 Testing
 
-JWT_SECRET
+## Backend tests
 
-for the JWT signing secret.
+Backend tests are located under:
 
-Keep:
+```text
+backend/src/test/java/
+```
 
-application-local.properties
+They include tests for:
 
-local and uncommitted.
+- Application context
+- Authentication service
+- Contact service
+- Contact controller
 
-React Dynamic Lists
+Run:
 
-Dynamic email and phone rows use stable generated IDs rather than array indexes as React keys.
+```bash
+cd backend
+./mvnw test
+```
 
-This improves list rendering when entries are inserted or removed.
+On Windows:
 
-Generated Files
+```bat
+cd backend
+mvnw.cmd test
+```
 
-Do not commit:
+The project also includes Testcontainers support for SQL Server integration testing.
 
-backend/target/
-frontend/node_modules/
-frontend/dist/
+## Frontend tests
+
+Frontend tests use Vitest and Testing Library.
+
+Run:
+
+```bash
+cd frontend
+npm test
+```
+
+For a single non-watch test run:
+
+```bash
+npm test -- --run
+```
+
+Coverage:
+
+```bash
+npm run test:coverage
+```
+
+Coverage reports are generated under:
+
+```text
 frontend/coverage/
-frontend/.scannerwork/
+```
 
-Complete Development Workflow
+---
 
-A normal development cycle is:
+# 📊 Code Coverage
 
-1. Start SQL Server
-        ↓
-2. Configure backend local settings
-        ↓
-3. Set JWT_SECRET
-        ↓
-4. Start Spring Boot backend
-        ↓
-5. Start React/Vite frontend
-        ↓
-6. Test application manually
-        ↓
-7. Run backend tests
-        ↓
-8. Run frontend tests
-        ↓
-9. Generate frontend coverage
-        ↓
-10. Run SonarQube analysis
-        ↓
-11. Review Quality Gate
-        ↓
-12. Commit changes
-        ↓
-13. Push feature branch
-        ↓
-14. Create Pull Request
+The backend includes JaCoCo.
 
-Project Status
+Run:
 
-The Contact Management System currently includes:
+```bash
+cd backend
+./mvnw test
+```
 
-Complete Spring Boot backend
+The JaCoCo report is generated during the Maven test lifecycle.
 
-SQL Server persistence
+The frontend uses V8 coverage through Vitest:
 
-Flyway database migrations
+```bash
+npm run test:coverage
+```
 
-JWT authentication
+---
 
-BCrypt password hashing
+# 🔎 Code Quality / SonarQube
 
-Protected REST APIs
+The project contains SonarQube configuration for backend and frontend analysis.
 
-Contact CRUD
+The backend Maven configuration includes:
 
-Search and pagination
+```text
+sonar.projectKey=contact-management-backend
+sonar.projectName=Contact Management Backend
+sonar.host.url=http://localhost:9000
+```
 
-React/Vite frontend
+A SonarQube server should be running before performing a Sonar analysis.
 
-Protected frontend routing
+---
 
-Axios API integration
+# 🧱 Docker Images
 
-Contact forms
+### Backend
 
-Profile functionality
+The backend Dockerfile uses a multi-stage build:
 
-Toast notifications
+```text
+Maven + Eclipse Temurin 21
+        │
+        ├── compile
+        └── package
+              │
+              ▼
+Eclipse Temurin 21 JRE
+```
 
-Frontend automated tests
+The final runtime image contains the packaged Spring Boot JAR.
 
-Backend automated tests
+### Frontend
 
-JaCoCo coverage
+The frontend Dockerfile also uses a multi-stage build:
 
-Frontend V8/LCOV coverage
+```text
+Node 24 Alpine
+     │
+     ├── npm ci
+     └── npm run build
+             │
+             ▼
+        Nginx Alpine
+             │
+             └── serves React dist/
+```
 
-SonarQube integration
+---
 
-Passing frontend SonarQube Quality Gate
+# 🛡️ Security Considerations
 
-Author
+The project implements several security-related measures:
 
-Syed Muhammad Fuzail
+- JWT-based authentication
+- Password hashing through Spring Security
+- Protected API endpoints
+- Protected React routes
+- Authenticated user ownership checks for contacts
+- Input validation using Jakarta Validation
+- Duplicate email/phone checks
+- JWT expiration
+- Environment-based secrets for Docker deployment
 
-Java Full Stack Internship Project — 10Pearls
+### Important
+
+Never publish real database credentials or JWT secrets.
+
+The repository uses:
+
+```text
+.env.example
+```
+
+as the safe configuration template, while `.env` is ignored by Git.
+
+If credentials contained in a local development configuration have ever been exposed publicly, they should be replaced/rotated.
+
+---
+
+# 🔁 Typical User Workflow
+
+```text
+1. Open application
+       │
+       ▼
+2. Register account
+       │
+       ▼
+3. Login
+       │
+       ▼
+4. Receive JWT
+       │
+       ▼
+5. View contacts
+       │
+       ├── Search
+       ├── Paginate
+       ├── View details
+       ├── Add
+       ├── Edit
+       └── Delete
+       │
+       ▼
+6. Open profile
+       │
+       ├── Change password
+       └── Logout
+```
+
+---
+
+# 📋 Validation & Error Handling
+
+The backend uses Jakarta Bean Validation on request DTOs and controller parameters.
+
+Examples include:
+
+- Required fields
+- Password validation
+- Page number validation
+- Page-size limits
+- Contact request validation
+- Duplicate user identifiers
+
+A global exception handler is provided at:
+
+```text
+backend/src/main/java/com/contactmanagement/backend/exception/GlobalExceptionHandler.java
+```
+
+The frontend provides user feedback through its toast notification system.
+
+---
+
+# 📦 Useful Commands
+
+## Docker
+
+```bash
+docker compose up --build
+docker compose down
+docker compose down -v
+```
+
+## Backend
+
+```bash
+cd backend
+./mvnw test
+./mvnw clean package
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+```
+
+## Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+npm run build
+npm run preview
+npm test
+npm run test:coverage
+npm run lint
+```
+
+---
+
+# 📝 Notes for Developers
+
+### Environment configuration
+
+Production/container configuration is supplied through environment variables such as:
+
+```text
+SPRING_DATASOURCE_URL
+SPRING_DATASOURCE_USERNAME
+SPRING_DATASOURCE_PASSWORD
+JWT_SECRET
+JWT_EXPIRATION_MS
+```
+
+### Database schema management
+
+Flyway migrations live under:
+
+```text
+backend/src/main/resources/db/migration/
+```
+
+Do not casually rename or reorder already-applied Flyway migrations. Add a new migration for subsequent schema changes.
+
+### Contact ownership
+
+Contact queries are scoped to the authenticated user. This prevents one authenticated user from directly accessing another user's contacts through an ID.
+
+---
+
+# 👨‍💻 Project
+
+**Project:** Contact Management System  
+**Cohort:** 9  
+**Track:** JAVA Fullstack (Java + ReactJS)  
+**Repository:** `cohort-9-java-8620-syed`
+
+---
+
+## 📸 Screenshot Gallery
+
+| Screen | Preview |
+|---|---|
+| Login | `Screenshots/Screenshot 2026-09-03 105827.png` |
+| Register | `Screenshots/Screenshot 2026-09-03 105019.png` |
+| Contacts | `Screenshots/Screenshot 2026-09-03 105146.png` |
+| Contact Details | `Screenshots/Screenshot 2026-09-03 105306.png` |
+| Edit Contact | `Screenshots/Screenshot 2026-09-03 105421.png` |
+| Delete Confirmation | `Screenshots/Screenshot 2026-09-03 105650.png` |
+| Profile | `Screenshots/Screenshot 2026-09-03 105721.png` |
+| Change Password | `Screenshots/Screenshot 2026-09-03 105746.png` |
+
