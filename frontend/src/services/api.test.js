@@ -8,7 +8,7 @@ describe("api service", () => {
 
     it("creates the API instance with the correct base URL", () => {
         expect(api.defaults.baseURL).toBe(
-            "http://localhost:8080/api"
+            "/api"
         );
     });
 

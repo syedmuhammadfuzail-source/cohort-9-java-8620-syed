@@ -37,25 +37,44 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(
-                List.of("http://localhost:5173")
+        /*
+         * Allow the React frontend when running:
+         * - locally with Vite: http://localhost:5173
+         * - through Docker/Nginx: http://localhost:3000
+         *
+         * allowedOriginPatterns is used so localhost ports are handled
+         * correctly during development and Docker testing.
+         */
+        configuration.setAllowedOriginPatterns(
+                List.of(
+                        "http://localhost:*",
+                        "http://127.0.0.1:*"
+                )
         );
 
         configuration.setAllowedMethods(
                 List.of(
-                        HttpMethod.GET.name(),
-                        HttpMethod.POST.name(),
-                        HttpMethod.PUT.name(),
-                        HttpMethod.DELETE.name(),
-                        HttpMethod.OPTIONS.name()
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "DELETE",
+                        "OPTIONS"
                 )
         );
 
+        /*
+         * Allow Authorization and all normal browser request headers.
+         */
         configuration.setAllowedHeaders(
-                List.of(
-                        "Authorization",
-                        "Content-Type"
-                )
+                List.of("*")
+        );
+
+        /*
+         * Allow the frontend to read the Authorization header
+         * if it is returned by the backend.
+         */
+        configuration.setExposedHeaders(
+                List.of("Authorization")
         );
 
         configuration.setAllowCredentials(true);
@@ -63,7 +82,10 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
 
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration(
+                "/**",
+                configuration
+        );
 
         return source;
     }
@@ -71,21 +93,22 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http
-    ) {
+    ) throws Exception {
 
         http
-                // CSRF is disabled because this API uses stateless
-                // JWT authentication through the Authorization header.
+                // JWT API does not use browser sessions/CSRF
                 .csrf(csrf -> csrf.disable())
 
+                // Enable CORS using the configuration above
                 .cors(cors -> cors.configurationSource(
                         corsConfigurationSource()
                 ))
 
+                // Disable browser login mechanisms
                 .formLogin(form -> form.disable())
-
                 .httpBasic(basic -> basic.disable())
 
+                // JWT authentication is stateless
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS
@@ -94,23 +117,40 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
+                        /*
+                         * Public registration and login endpoints.
+                         */
                         .requestMatchers(
+                                HttpMethod.POST,
                                 "/api/auth/register",
                                 "/api/auth/login"
                         ).permitAll()
 
+                        /*
+                         * Allow browser CORS preflight requests.
+                         */
                         .requestMatchers(
                                 HttpMethod.OPTIONS,
                                 "/**"
                         ).permitAll()
 
+                        /*
+                         * Authenticated user endpoints.
+                         */
                         .requestMatchers(
-                                "/api/auth/me"
+                                "/api/auth/me",
+                                "/api/auth/change-password"
                         ).authenticated()
 
+                        /*
+                         * All remaining API endpoints require JWT.
+                         */
                         .anyRequest().authenticated()
                 )
 
+                /*
+                 * Process JWT before Spring's username/password filter.
+                 */
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class
